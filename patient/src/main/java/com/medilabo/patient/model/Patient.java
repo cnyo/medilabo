@@ -10,7 +10,6 @@ import java.util.Date;
 
 //@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "id"})
 @JsonFilter("patientFilter")
-
 @Entity
 public class Patient {
     @Id

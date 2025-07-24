@@ -34,14 +34,19 @@ public class PatientController {
     }
 
     @GetMapping("/patients/{id}")
-    public Patient getPatient(@PathVariable int id) {
+    public MappingJacksonValue getPatient(@PathVariable int id) {
         Patient patient = patientService.findById(id);
 
         if (Objects.isNull(patient)) {
             throw new PatientNotFoundException("Patient not found with id: " + id);
         }
 
-        return patient;
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("createdAt", "updatedAt", "id");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("patientFilter", filter);
+        MappingJacksonValue patientsFilters = new MappingJacksonValue(patient);
+        patientsFilters.setFilters(filters);
+
+        return patientsFilters;
     }
 
     @PostMapping("/patients")

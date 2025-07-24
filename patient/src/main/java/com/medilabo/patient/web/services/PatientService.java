@@ -17,8 +17,7 @@ public class PatientService {
     }
 
     public Patient findById(int id) {
-        return patientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
+        return patientRepository.findById(id).orElse(null);
     }
 
     public Patient save(Patient patient) {
