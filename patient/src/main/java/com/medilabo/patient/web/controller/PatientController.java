@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.medilabo.patient.model.Patient;
 import com.medilabo.patient.web.exceptions.PatientNotFoundException;
 import com.medilabo.patient.web.services.PatientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -50,7 +51,7 @@ public class PatientController {
     }
 
     @PostMapping("/patients")
-    public ResponseEntity<Patient> addPatient(@RequestBody Patient patient) {
+    public ResponseEntity<Patient> addPatient(@Valid @RequestBody Patient patient) {
         Patient patientAdded = patientService.save(patient);
 
         if (Objects.isNull(patientAdded)) {
@@ -59,15 +60,14 @@ public class PatientController {
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("{id}")
+                .path("/{id}")
                 .buildAndExpand(patientAdded.getId())
                 .toUri();
-
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/patients/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable int id, @RequestBody Patient patient) {
+    public ResponseEntity<Patient> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
         Patient patientAdded = patientService.update(id, patient);
 
         if (Objects.isNull(patientAdded)) {
