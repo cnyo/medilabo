@@ -5,10 +5,8 @@ CREATE TABLE IF NOT EXISTS patient
     first_name   VARCHAR(255) NOT NULL,
     birth_date   DATE         NOT NULL,
     gender       CHAR(1)      NOT NULL CHECK (gender in ('M', 'F')),
-    address      VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20)  NOT NULL UNIQUE,
-    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    address      VARCHAR(255),
+    phone_number VARCHAR(20) UNIQUE
 );
 
 ALTER TABLE patient
