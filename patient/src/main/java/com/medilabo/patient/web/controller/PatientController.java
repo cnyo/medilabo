@@ -12,17 +12,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Patient", description = "Patient management operations")
 @RestController
+@RequestMapping("/patients")
 public class PatientController {
 
     @Autowired
     private PatientService patientService;
 
+    @Tag(name = "find all")
+    @Tag(name = "findAllPatients", description = "Retrieve a list of all patients")
     @GetMapping("/patients")
     public MappingJacksonValue getPatientList() {
         List<Patient> patients = patientService.findAll();
@@ -34,6 +38,8 @@ public class PatientController {
         return patientsFilters;
     }
 
+    @Tag(name = "find")
+    @Tag(name = "findPatient", description = "Find a patient by ID")
     @GetMapping("/patients/{id}")
     public MappingJacksonValue getPatient(@PathVariable int id) {
         Patient patient = patientService.findById(id);
@@ -50,6 +56,8 @@ public class PatientController {
         return patientsFilters;
     }
 
+    @Tag(name = "create")
+    @Tag(name = "createPatient", description = "Create a new patient")
     @PostMapping("/patients")
     public ResponseEntity<Patient> addPatient(@Valid @RequestBody Patient patient) {
         Patient patientAdded = patientService.save(patient);
@@ -63,9 +71,12 @@ public class PatientController {
                 .path("/{id}")
                 .buildAndExpand(patientAdded.getId())
                 .toUri();
+
         return ResponseEntity.created(location).build();
     }
 
+    @Tag(name = "update")
+    @Tag(name = "updatePatient", description = "Update an existing patient")
     @PutMapping("/patients/{id}")
     public ResponseEntity<Patient> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
         Patient patientAdded = patientService.update(id, patient);
