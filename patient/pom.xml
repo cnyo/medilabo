@@ -12,7 +12,7 @@
 	<artifactId>patient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>patient</name>
-	<description>Micro-service patiant du projet MediLabo</description>
+	<description>Micro-service patient du projet MediLabo</description>
 	<url/>
 	<licenses>
 		<license/>

@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Patient", description = "Patient management operations")
 @RestController
-@RequestMapping("/patients")
 public class PatientController {
 
     @Autowired
@@ -30,7 +29,7 @@ public class PatientController {
     @GetMapping("/patients")
     public MappingJacksonValue getPatientList() {
         List<Patient> patients = patientService.findAll();
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("createdAt", "updatedAt", "id");
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("createdAt", "updatedAt");
         FilterProvider filters = new SimpleFilterProvider().addFilter("patientFilter", filter);
         MappingJacksonValue patientsFilters = new MappingJacksonValue(patients);
         patientsFilters.setFilters(filters);
@@ -48,7 +47,7 @@ public class PatientController {
             throw new PatientNotFoundException("Patient not found with id: " + id);
         }
 
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("createdAt", "updatedAt", "id");
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("createdAt", "updatedAt");
         FilterProvider filters = new SimpleFilterProvider().addFilter("patientFilter", filter);
         MappingJacksonValue patientsFilters = new MappingJacksonValue(patient);
         patientsFilters.setFilters(filters);
