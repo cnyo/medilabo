@@ -3,11 +3,11 @@ package com.medilabo.patient.web.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.medilabo.patient.configurations.ApplicationPropertiesConfiguration;
 import com.medilabo.patient.model.Patient;
 import com.medilabo.patient.web.exceptions.PatientNotFoundException;
 import com.medilabo.patient.web.services.PatientService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +21,25 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 public class PatientController {
 
-    @Autowired
-    private PatientService patientService;
+    private final PatientService patientService;
+
+    private final ApplicationPropertiesConfiguration appProperties;
+
+    public PatientController(PatientService patientService, ApplicationPropertiesConfiguration appProperties) {
+        this.patientService = patientService;
+        this.appProperties = appProperties;
+    }
 
     @Tag(name = "find all")
     @Tag(name = "findAllPatients", description = "Retrieve a list of all patients")
     @GetMapping("/patients")
     public MappingJacksonValue getPatientList() {
         List<Patient> patients = patientService.findAll();
+        List<Patient> limitedListPatient = patients.subList(0, appProperties.getPatientsLimit());
+
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("createdAt", "updatedAt");
         FilterProvider filters = new SimpleFilterProvider().addFilter("patientFilter", filter);
-        MappingJacksonValue patientsFilters = new MappingJacksonValue(patients);
+        MappingJacksonValue patientsFilters = new MappingJacksonValue(limitedListPatient);
         patientsFilters.setFilters(filters);
 
         return patientsFilters;
