@@ -1,12 +1,17 @@
 package com.medilabo.front.beans;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class PatientBean {
     private int id;
     private String name;
     private String firstName;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
+
     private String gender;
     private String address;
     private String phoneNumber;
