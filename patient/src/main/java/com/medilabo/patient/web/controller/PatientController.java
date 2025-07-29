@@ -94,7 +94,6 @@ public class PatientController {
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("{id}")
                 .buildAndExpand(patientAdded.getId())
                 .toUri();
 

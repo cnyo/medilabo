@@ -1,14 +1,12 @@
 package com.medilabo.patient.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.Length;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 //@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "id"})
@@ -17,15 +15,21 @@ import java.util.Date;
 public class Patient {
     @Id
     private int id;
+
     @Size(min = 2, max = 25)
     private String name;
+
     @Size(min = 2, max = 50)
     private String firstName;
+
     @Past
     private Date birthDate;
+
     @Length(min = 1, max = 1)
     private String gender;
+
     private String address;
+
     private String phoneNumber;
 
     public Patient() {
