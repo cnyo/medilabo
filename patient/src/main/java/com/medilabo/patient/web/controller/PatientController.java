@@ -8,6 +8,7 @@ import com.medilabo.patient.model.Patient;
 import com.medilabo.patient.web.exceptions.PatientNotFoundException;
 import com.medilabo.patient.web.services.PatientService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +26,17 @@ public class PatientController {
 
     private final ApplicationPropertiesConfiguration appProperties;
 
+    @Value("${server.instance.id}")
+    String instanceId;
+
     public PatientController(PatientService patientService, ApplicationPropertiesConfiguration appProperties) {
         this.patientService = patientService;
         this.appProperties = appProperties;
+    }
+
+    @GetMapping("/hello")
+    public String hello() {
+        return String.format("Hello from instance %s", instanceId);
     }
 
     @Tag(name = "find all")
