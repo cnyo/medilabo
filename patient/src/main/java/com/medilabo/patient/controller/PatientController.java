@@ -1,12 +1,12 @@
-package com.medilabo.patient.web.controller;
+package com.medilabo.patient.controller;
 
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.medilabo.patient.configurations.ApplicationPropertiesConfiguration;
 import com.medilabo.patient.model.Patient;
-import com.medilabo.patient.web.exceptions.PatientNotFoundException;
-import com.medilabo.patient.web.services.PatientService;
+import com.medilabo.patient.exceptions.PatientNotFoundException;
+import com.medilabo.patient.services.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

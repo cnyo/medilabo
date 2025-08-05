@@ -1,4 +1,4 @@
-package com.medilabo.patient.web.exceptions;
+package com.medilabo.patient.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

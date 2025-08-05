@@ -1,7 +1,7 @@
-package com.medilabo.patient.web.services;
+package com.medilabo.patient.services;
 
 import com.medilabo.patient.model.Patient;
-import com.medilabo.patient.web.repository.PatientRepository;
+import com.medilabo.patient.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

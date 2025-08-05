@@ -1,4 +1,4 @@
-package com.medilabo.patient.web.repository;
+package com.medilabo.patient.repository;
 
 import com.medilabo.patient.model.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
