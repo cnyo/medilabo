@@ -12,18 +12,13 @@ spring:
           discovery:
             locator:
               enabled: true
-#          default-filters:
-#            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
           routes:
-            - id: exemple-hello
-#              uri: http://localhost:9002
+            - id: api-patient
               uri: lb://patient-service
               predicates:
-                - Path=/api/patients/hello
+                - Path=/api/patients, /api/patients/, /api/patients/**
               filters:
-                - StripPrefix=2
-#                - AddRequestHeader=X-Request-Example, Gateway-Request
-#                - AddResponseHeader=X-Response-Example, Gateway-Response
+                - StripPrefix=1
 
 eureka:
   client:
