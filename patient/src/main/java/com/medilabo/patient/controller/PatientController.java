@@ -1,11 +1,9 @@
 package com.medilabo.patient.controller;
 
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.medilabo.patient.configurations.ApplicationPropertiesConfiguration;
 import com.medilabo.patient.model.Patient;
 import com.medilabo.patient.exceptions.PatientNotFoundException;
+import com.medilabo.patient.services.JsonFilterService;
 import com.medilabo.patient.services.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,24 +11,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Patient", description = "Patient management operations")
 @RestController
 public class PatientController {
+    private static final String PATIENT_FILTER = "patientFilter";
 
     private final PatientService patientService;
-
+    private final JsonFilterService jsonFilterService;
     private final ApplicationPropertiesConfiguration appProperties;
 
     @Value("${server.instance.id}")
     String instanceId;
 
-    public PatientController(PatientService patientService, ApplicationPropertiesConfiguration appProperties) {
+    public PatientController(PatientService patientService, JsonFilterService jsonFilterService, ApplicationPropertiesConfiguration appProperties) {
         this.patientService = patientService;
+        this.jsonFilterService = jsonFilterService;
         this.appProperties = appProperties;
     }
 
@@ -46,12 +48,7 @@ public class PatientController {
         List<Patient> patients = patientService.findAll();
         List<Patient> limitedListPatient = patients.subList(0, appProperties.getPatientsLimit());
 
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("createdAt", "updatedAt");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("patientFilter", filter);
-        MappingJacksonValue patientsFilters = new MappingJacksonValue(limitedListPatient);
-        patientsFilters.setFilters(filters);
-
-        return patientsFilters;
+        return jsonFilterService.filterProperties(patients, PATIENT_FILTER, "createdAt", "updatedAt");
     }
 
     @Tag(name = "find")
@@ -64,12 +61,7 @@ public class PatientController {
             throw new PatientNotFoundException("Patient not found with id: " + id);
         }
 
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("createdAt", "updatedAt");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("patientFilter", filter);
-        MappingJacksonValue patientsFilters = new MappingJacksonValue(patient);
-        patientsFilters.setFilters(filters);
-
-        return patientsFilters;
+        return jsonFilterService.filterProperties(patient, PATIENT_FILTER, "createdAt", "updatedAt");
     }
 
     @Tag(name = "create")
@@ -91,21 +83,15 @@ public class PatientController {
         return ResponseEntity.created(location).build();
     }
 
-    @Tag(name = "update")
     @Tag(name = "updatePatient", description = "Update an existing patient")
     @PutMapping("/patients/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
-        Patient patientAdded = patientService.update(id, patient);
+    public ResponseEntity<MappingJacksonValue> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
+        Patient updatedPatient = patientService.update(id, patient);
 
-        if (Objects.isNull(patientAdded)) {
-            return ResponseEntity.noContent().build();
+        if (Objects.isNull(updatedPatient)) {
+            return ResponseEntity.notFound().build();
         }
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .buildAndExpand(patientAdded.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.ok(jsonFilterService.filterProperties(updatedPatient, PATIENT_FILTER, "createdAt", "updatedAt"));
     }
 }
