@@ -3,10 +3,13 @@ package com.medilabo.patient.controller;
 import com.medilabo.patient.configurations.ApplicationPropertiesConfiguration;
 import com.medilabo.patient.model.Patient;
 import com.medilabo.patient.exceptions.PatientNotFoundException;
+import com.medilabo.patient.exceptions.PatientAlreadyExistsException;
 import com.medilabo.patient.services.JsonFilterService;
 import com.medilabo.patient.services.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -64,23 +67,29 @@ public class PatientController {
         return jsonFilterService.filterProperties(patient, PATIENT_FILTER, "createdAt", "updatedAt");
     }
 
-    @Tag(name = "create")
     @Tag(name = "createPatient", description = "Create a new patient")
     @PostMapping("/patients")
-    public ResponseEntity<Patient> addPatient(@Valid @RequestBody Patient patient) {
-        Patient patientAdded = patientService.save(patient);
+    public ResponseEntity<String> addPatient(@Valid @RequestBody Patient patient) {
+        try {
+            Patient patientAdded = patientService.save(patient);
 
-        if (Objects.isNull(patientAdded)) {
-            return ResponseEntity.noContent().build();
+            if (Objects.isNull(patientAdded)) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(patientAdded.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).build();
+        } catch (PatientAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("A patient with the same data already exists.");
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Data integrity violation: possible duplicate or constraint error.");
         }
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(patientAdded.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
     }
 
     @Tag(name = "updatePatient", description = "Update an existing patient")
