@@ -30,8 +30,8 @@ public class PatientController {
     private final JsonFilterService jsonFilterService;
     private final ApplicationPropertiesConfiguration appProperties;
 
-    @Value("${server.instance.id}")
-    String instanceId;
+//    @Value("${server.instance.id}")
+//    String instanceId;
 
     public PatientController(PatientService patientService, JsonFilterService jsonFilterService, ApplicationPropertiesConfiguration appProperties) {
         this.patientService = patientService;
@@ -39,10 +39,10 @@ public class PatientController {
         this.appProperties = appProperties;
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return String.format("Hello from instance %s", instanceId);
-    }
+//    @GetMapping("/hello")
+//    public String hello() {
+//        return String.format("Hello from instance %s", instanceId);
+//    }
 
     @Tag(name = "find all")
     @Tag(name = "findAllPatients", description = "Retrieve a list of all patients")
