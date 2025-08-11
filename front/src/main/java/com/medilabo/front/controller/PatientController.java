@@ -35,13 +35,17 @@ public class PatientController {
     public String index(HttpSession session, Model model) {
 
         try {
-            loginService.isAuthenticated(session);
-            String token = loginService.createHttpToken(session);
+            logger.info("Accessing /patients endpoint");
 
-            List<PatientBean> patients = webClient
-                    .get()
+            String auth = (String) session.getAttribute("authHeader");
+            logger.info("Auth header from session: " + auth);
+            if (auth == null) {
+                return "redirect:/login";
+            }
+
+            List<PatientBean> patients = webClient.get()
                     .uri("/api/patients")
-                    .header(HttpHeaders.AUTHORIZATION, "Basic " + token)
+                    .headers(header -> header.set(HttpHeaders.AUTHORIZATION, auth))
                     .retrieve()
                     .bodyToFlux(PatientBean.class)
                     .collectList()

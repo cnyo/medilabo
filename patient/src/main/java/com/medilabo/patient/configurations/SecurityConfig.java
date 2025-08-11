@@ -18,13 +18,15 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService users() {
-        InMemoryUserDetailsManager uds = new InMemoryUserDetailsManager();
-        uds.createUser(User.withUsername("user")
-                .password("{noop}user")   // {noop} pour tests : mot de passe en clair
-                .roles("USER")
+        InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
+
+        userDetailsService.createUser(User
+                .withUsername("gateway")
+                .password("{noop}gatewaypass")   // {noop} pour tests : mot de passe en clair
+                .roles("GATEWAY")
                 .build());
 
-        return uds;
+        return userDetailsService;
     }
 
     @Bean
@@ -32,8 +34,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/patients").hasRole("USER")
                         .anyRequest().permitAll()
+//                        .anyRequest().authenticated()
+//                        .anyRequest().access(hasIpAddress("127.0.0.1"))
                 )
                 .httpBasic(withDefaults());
 

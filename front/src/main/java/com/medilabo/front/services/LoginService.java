@@ -10,10 +10,6 @@ import java.util.Base64;
 
 @Service
 public class LoginService {
-    // This service can be expanded in the future to include more complex login logic,
-    // such as integrating with an authentication provider, handling user roles, etc.
-
-    // Currently, it serves as a placeholder for potential future enhancements.
 
     public void isAuthenticated(HttpSession session) {
         String username = session.getAttribute("username").toString();

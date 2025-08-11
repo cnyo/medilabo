@@ -58,6 +58,7 @@ public class PatientController {
     public MappingJacksonValue getPatientList() {
         List<Patient> patients = patientService.findAll();
         List<Patient> limitedListPatient = patients.subList(0, appProperties.getPatientsLimit());
+        logger.info("Retrieved {} patients", limitedListPatient.size());
 
         return jsonFilterService.filterProperties(patients, PATIENT_FILTER, "createdAt", "updatedAt");
     }
