@@ -7,6 +7,8 @@ import com.medilabo.patient.exceptions.PatientAlreadyExistsException;
 import com.medilabo.patient.services.JsonFilterService;
 import com.medilabo.patient.services.PatientService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -30,8 +32,10 @@ public class PatientController {
     private final JsonFilterService jsonFilterService;
     private final ApplicationPropertiesConfiguration appProperties;
 
-//    @Value("${server.instance.id}")
-//    String instanceId;
+    private Logger logger = LoggerFactory.getLogger(PatientController.class);
+
+    @Value("${server.instance.id}")
+    String instanceId;
 
     public PatientController(PatientService patientService, JsonFilterService jsonFilterService, ApplicationPropertiesConfiguration appProperties) {
         this.patientService = patientService;
@@ -39,10 +43,14 @@ public class PatientController {
         this.appProperties = appProperties;
     }
 
-//    @GetMapping("/hello")
-//    public String hello() {
-//        return String.format("Hello from instance %s", instanceId);
-//    }
+    @GetMapping("/patients/hello")
+    public String hello() {
+        String message = String.format("Hello %s!", instanceId);
+
+        logger.info(message);
+
+        return message;
+    }
 
     @Tag(name = "find all")
     @Tag(name = "findAllPatients", description = "Retrieve a list of all patients")

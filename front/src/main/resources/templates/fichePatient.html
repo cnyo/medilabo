@@ -10,7 +10,10 @@
 <body>
 
 <div class="container">
-    <h1 class="text-center">Application MediLabo</h1>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Se déconnecter</button>
+    </form>
+    <h1 class="text-center">Application MediLabo | Patients</h1>
     <div class="row">
 
         <form action="" th:action="@{|/update-patient/${patient.id}|}" method="post" class="col-md-6 mx-auto">
@@ -59,7 +62,7 @@
             </div>
             <input type="hidden" name="_method" value="put" />
             <div class="col-md-12 text-center">
-                <a th:href="@{/}" class="btn btn-primary">Retour à la liste des patients</a>
+                <a th:href="@{/patients}" class="btn btn-primary">Retour à la liste des patients</a>
                 <button type="submit" class="btn btn-success">Envoyer</button>
             </div>
         </form>
