@@ -11,6 +11,14 @@ public class Note {
     private String patient;
     private String note;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getPatId() {
         return patId;
     }
@@ -33,5 +41,15 @@ public class Note {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "id='" + id + '\'' +
+                ", patId='" + patId + '\'' +
+                ", patient='" + patient + '\'' +
+                ", note='" + note + '\'' +
+                '}';
     }
 }

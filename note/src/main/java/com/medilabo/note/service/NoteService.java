@@ -41,4 +41,26 @@ public class NoteService {
 
         return note;
     }
+
+    public Note addNote(Note note) {
+        log.debug("Adding note: {}", note);
+        Note savedNote = noteRepository.insert(note);
+        log.info("Note added with id: {}", savedNote.getId());
+
+        return savedNote;
+    }
+
+    public Note updateNote(Note note) {
+        log.debug("Updating note: {}", note);
+        Optional<Note> existingNote = noteRepository.findById(note.getId());
+        if (existingNote.isPresent()) {
+            Note updatedNote = noteRepository.save(note);
+            log.info("Note updated with id: {}", updatedNote.getId());
+
+            return updatedNote;
+        } else {
+            log.error("Note not found for update");
+            throw new NoteNotFoundException("Note not found with id: " + note.getId());
+        }
+    }
 }
