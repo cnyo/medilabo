@@ -2,37 +2,30 @@ package com.medilabo.front.controller;
 
 import com.medilabo.front.services.LoginService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Controller
 public class LoginController {
 
-    @Autowired
-    private WebClient webClient;
-
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(LoginController.class);
     @Autowired
     private LoginService loginService;
 
-    private final Logger logger = Logger.getLogger(LoginController.class.getName());
-
     @GetMapping("/login")
-    public String loginForm(@RequestParam(value="error", required=false) String error, Model model) {
+    public String loginForm(@RequestParam(value = "error", required = false) String error, Model model) {
         if (error != null) {
+            log.error("Login error: {}", error);
             model.addAttribute("error", "Identifiants invalides");
         }
 
@@ -40,29 +33,24 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String doLogin(@RequestParam String username,
-                          @RequestParam String password,
-                          HttpSession session,
-                          Model model) {
-        // todo: refactor in service ?
+    public String doLogin(@RequestParam String username, @RequestParam String password, HttpSession session, Model model) {
+
         String basic = "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
 
         try {
             // test call to gateway protected endpoint
-            Map<String,String> resp = webClient.get()
-                    .uri("http://localhost:9001/auth")
-                    .headers(h -> h.set(HttpHeaders.AUTHORIZATION, basic))
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
-                    })
-                    .block(Duration.ofSeconds(5));
+            Map<String, String> resp = loginService.getLoginResponse(username, password, basic);
+            resp.forEach((k, v) -> log.info("Response: {} = {}", k, v));
 
-            logger.info("Response from auth endpoint: " + resp);
-            System.out.println("Response from auth endpoint: " + resp);
+            if (resp.isEmpty() || !resp.containsKey("name")) {
+                log.error("Login failed, no response received from gateway");
+                model.addAttribute("error", "Identifiants invalides");
+                return "login?error";
+            }
 
-            // auth OK -> sauvegarde du header d'auth en session (pour tests seulement)
+            // Save the auth header in session
             session.setAttribute("authHeader", basic);
-            logger.info("User authenticated, authHeader saved in session id: " + session.getId());
+            log.info("User authenticated, authHeader saved in session id: {}", session.getId());
 
             return "redirect:/patients";
         } catch (WebClientResponseException.Unauthorized ex) {
@@ -74,7 +62,7 @@ public class LoginController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("authHeader");
-        logger.info("User logged out, authHeader removed from session.");
+        log.info("User logged out, authHeader removed from session.");
 
         return "redirect:/login";
     }

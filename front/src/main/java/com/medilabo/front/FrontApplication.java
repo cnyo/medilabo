@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 public class FrontApplication {
+	private static final String BASE_URI = "http://localhost:9001";
 
 	public static void main(String[] args) {
 		SpringApplication.run(FrontApplication.class, args);
@@ -14,6 +15,6 @@ public class FrontApplication {
 
 	@Bean
 	public WebClient webClient(WebClient.Builder builder) {
-		return builder.build();
+		return builder.baseUrl(BASE_URI).build();
 	}
 }
