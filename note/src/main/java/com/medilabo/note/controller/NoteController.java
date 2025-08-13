@@ -19,39 +19,31 @@ public class NoteController {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(NoteService.class);
 
-    @GetMapping("/notes")
-    public List<Note> getNotes() {
-        List<Note> notes = noteService.getNotes();
-        log.info("{} notes found", notes.size());
-
-        return notes;
-    }
-
-    @GetMapping("/notes/{patientId}")
+    @GetMapping("/patients/{patientId}/notes")
     public List<Note> getNotes(@PathVariable String patientId) {
 
         List<Note> notes = noteService.getNoteByPatientId(patientId);
-        log.info("Notes for patient {} found", patientId);
+        log.info("Notes for patient {} found: {}", patientId, notes.size());
 
         return notes;
     }
 
-    @PostMapping("/notes")
-    public ResponseEntity<String> addNote(@RequestBody Note note) {
-        log.info("Adding note for patient {}", note.getPatId());
-        Note savedNote = noteService.addNote(note);
+    @PostMapping("/patients/{patientId}/notes")
+    public ResponseEntity<String> addNote(@RequestBody Note note, @PathVariable String patientId) {
+        Note savedNote = noteService.addNote(note, patientId);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(savedNote.getId())
                 .toUri();
+        log.info("Note added to patient {}", note.getPatId());
 
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/notes")
-    public Note updateNote(@RequestBody Note note) {
+    @PutMapping("/patients/{patientId}/notes/{id}")
+    public Note updateNote(@RequestBody Note note, @PathVariable String patientId, @PathVariable String id) {
         log.info("Updating note with id {}", note.getId());
         return noteService.updateNote(note);
     }

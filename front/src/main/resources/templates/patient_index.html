@@ -16,7 +16,7 @@
 
     <div class="row">
         <div th:each="patient : ${patients}" class="col-md-4 my-1">
-            <a th:href="@{|/detail-patient/${patient.id}|}">
+            <a th:href="@{|/patients/${patient.id}|}">
                 <p th:text="${patient.name}"></p>
             </a>
         </div>

@@ -1,10 +1,10 @@
-package com.medilabo.front.beans;
+package com.medilabo.front.dto;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-public class PatientBean {
+public class PatientDto {
     private int id;
     private String name;
     private String firstName;
@@ -16,7 +16,7 @@ public class PatientBean {
     private String address;
     private String phoneNumber;
 
-    public PatientBean() {
+    public PatientDto() {
     }
 
     public int getId() {

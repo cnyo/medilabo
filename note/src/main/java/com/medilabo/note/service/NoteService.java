@@ -17,17 +17,6 @@ public class NoteService {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(NoteService.class);
 
-    public Note getNoteById(String id) {
-        Optional<Note> note = noteRepository.findById(id);
-        if (note.isPresent()) {
-            log.debug(note.get().toString());
-            return note.get();
-        } else {
-            log.error("Note not found");
-            throw new NoteNotFoundException("Note not found with id: " + id);
-        }
-    }
-
     public List<Note> getNoteByPatientId(String patientId) {
         List<Note> notes = noteRepository.findByPatId(patientId);
         log.debug("{} notes found", notes.size());
@@ -35,15 +24,9 @@ public class NoteService {
         return notes;
     }
 
-    public List<Note> getNotes() {
-        List<Note> note = noteRepository.findAll();
-        log.debug("Note count: {}", note.size());
-
-        return note;
-    }
-
-    public Note addNote(Note note) {
+    public Note addNote(Note note, String patientId) {
         log.debug("Adding note: {}", note);
+        note.setPatId(patientId);
         Note savedNote = noteRepository.insert(note);
         log.info("Note added with id: {}", savedNote.getId());
 

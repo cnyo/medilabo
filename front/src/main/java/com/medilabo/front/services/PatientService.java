@@ -1,6 +1,6 @@
 package com.medilabo.front.services;
 
-import com.medilabo.front.beans.PatientBean;
+import com.medilabo.front.dto.PatientDto;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +23,7 @@ public class PatientService {
         this.webClient = webClient;
     }
 
-    public List<PatientBean> getPatients(HttpSession session) {
+    public List<PatientDto> getPatients(HttpSession session) {
         String auth = (String) session.getAttribute("authHeader");
         log.debug("Fetching patients with auth: {}", auth);
 
@@ -31,12 +31,12 @@ public class PatientService {
                 .uri(BASE_PATH)
                 .headers(header -> header.set(HttpHeaders.AUTHORIZATION, auth))
                 .retrieve()
-                .bodyToFlux(PatientBean.class)
+                .bodyToFlux(PatientDto.class)
                 .collectList()
                 .block();
     }
 
-    public PatientBean getPatientById(int id, HttpSession session) {
+    public PatientDto getPatientById(int id, HttpSession session) {
         String auth = (String) session.getAttribute("authHeader");
 
         return webClient
@@ -44,11 +44,11 @@ public class PatientService {
                 .uri(BASE_PATH + "/" + id)
                 .header(HttpHeaders.AUTHORIZATION, auth)
                 .retrieve()
-                .bodyToMono(PatientBean.class)
+                .bodyToMono(PatientDto.class)
                 .block();
     }
 
-    public ResponseEntity<PatientBean> updatePatient(int id, PatientBean updatedPatient, HttpSession session) {
+    public ResponseEntity<PatientDto> updatePatient(int id, PatientDto updatedPatient, HttpSession session) {
         String auth = (String) session.getAttribute("authHeader");
 
         return webClient.put()
@@ -56,7 +56,7 @@ public class PatientService {
                 .bodyValue(updatedPatient)
                 .header(HttpHeaders.AUTHORIZATION, auth)
                 .retrieve()
-                .toEntity(PatientBean.class)
+                .toEntity(PatientDto.class)
                 .block();
     }
 }

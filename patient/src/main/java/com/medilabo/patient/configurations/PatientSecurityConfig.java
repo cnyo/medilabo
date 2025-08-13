@@ -14,15 +14,15 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableMethodSecurity
-public class SecurityConfig {
+public class PatientSecurityConfig {
 
     @Bean
     public UserDetailsService users() {
         InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
 
         userDetailsService.createUser(User
-                .withUsername("gateway")
-                .password("{noop}gatewaypass")   // {noop} pour tests : mot de passe en clair
+                .withUsername("user")
+                .password("{noop}user")   // {noop} pour tests : mot de passe en clair
                 .roles("GATEWAY")
                 .build());
 
