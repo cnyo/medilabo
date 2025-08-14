@@ -1,6 +1,6 @@
 package com.medilabo.assessment.enums;
 
-public enum Levels {
+public enum LevelEnum {
     NONE("None"),
     BORDERLINE("Borderline"),
     IN_DANGER("In Danger"),
@@ -8,7 +8,7 @@ public enum Levels {
 
     private final String label;
 
-    Levels(String label) {
+    LevelEnum(String label) {
         this.label = label;
     }
 

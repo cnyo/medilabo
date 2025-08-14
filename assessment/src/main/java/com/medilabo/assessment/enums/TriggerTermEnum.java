@@ -1,6 +1,6 @@
 package com.medilabo.assessment.enums;
 
-public enum TriggerTerms {
+public enum TriggerTermEnum {
     HEMOGLOBUNE_A1C("Hémoglobine A1C"),
     MICROALBUMINE("Microalbumine"),
     TAILLE("Taille"),
@@ -15,7 +15,7 @@ public enum TriggerTerms {
 
     private final String label;
 
-    TriggerTerms(String label) {
+    TriggerTermEnum(String label) {
         this.label = label;
     }
 
