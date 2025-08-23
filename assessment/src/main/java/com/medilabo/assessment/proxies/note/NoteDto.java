@@ -9,6 +9,13 @@ public class NoteDto {
     public NoteDto() {
     }
 
+    public NoteDto(String id, String patId, String patient, String note) {
+        this.id = id;
+        this.patId = patId;
+        this.patient = patient;
+        this.note = note;
+    }
+
     public String getId() {
         return id;
     }

@@ -1,8 +1,10 @@
 package com.medilabo.assessment.proxies.patient;
 
+import com.medilabo.assessment.enums.Gender;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.Period;
 
 public class PatientDto {
     private int id;
@@ -10,7 +12,7 @@ public class PatientDto {
     private String firstName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     private String gender;
     private String address;
@@ -43,11 +45,11 @@ public class PatientDto {
         this.firstName = firstName;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -82,5 +84,19 @@ public class PatientDto {
                 ", name='" + name + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", birthDate=" + birthDate;
+    }
+
+    public int getAge() {
+        LocalDate currentDate = LocalDate.now();
+
+        return Period.between(birthDate, currentDate).getYears();
+    }
+
+    public boolean isMale() {
+        return gender.equalsIgnoreCase(Gender.MALE.getLabel());
+    }
+
+    public boolean isFemale() {
+        return gender.equalsIgnoreCase(Gender.FEMALE.getLabel());
     }
 }

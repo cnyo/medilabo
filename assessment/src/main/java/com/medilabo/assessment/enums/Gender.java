@@ -1,14 +1,12 @@
 package com.medilabo.assessment.enums;
 
-public enum LevelEnum {
-    NONE("None"),
-    BORDERLINE("Borderline"),
-    IN_DANGER("In Danger"),
-    EARLY_ONSET("Early onset");
+public enum Gender {
+    MALE("M"),
+    FEMALE("F");
 
     private final String label;
 
-    LevelEnum(String label) {
+    Gender(String label) {
         this.label = label;
     }
 
