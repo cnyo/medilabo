@@ -2,13 +2,15 @@ package com.medilabo.front.services;
 
 import com.medilabo.front.dto.PatientDto;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 public class PatientService {
@@ -17,7 +19,7 @@ public class PatientService {
 
     private final WebClient webClient;
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(PatientService.class);
+    private static final Logger log = getLogger(PatientService.class);
 
     public PatientService(WebClient webClient) {
         this.webClient = webClient;

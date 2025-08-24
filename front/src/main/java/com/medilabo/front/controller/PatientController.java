@@ -1,7 +1,9 @@
 package com.medilabo.front.controller;
 
+import com.medilabo.front.dto.AssessmentDto;
 import com.medilabo.front.dto.NoteDto;
 import com.medilabo.front.dto.PatientDto;
+import com.medilabo.front.services.AssessmentService;
 import com.medilabo.front.services.NoteService;
 import com.medilabo.front.services.PatientService;
 import jakarta.servlet.http.HttpSession;
@@ -19,12 +21,14 @@ public class PatientController {
 
     private final PatientService patientService;
     private final NoteService noteService;
+    private final AssessmentService assessmentService;
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(PatientController.class);
 
-    public PatientController(PatientService patientService, NoteService noteService) {
+    public PatientController(PatientService patientService, NoteService noteService, AssessmentService assessmentService) {
         this.patientService = patientService;
         this.noteService = noteService;
+        this.assessmentService = assessmentService;
     }
 
     @GetMapping("/")
@@ -51,14 +55,16 @@ public class PatientController {
     public String fichePatient(@PathVariable int id, HttpSession session, Model model) {
 
         try {
-            log.info("Patient detail: {}", id);
+            log.info("Patient details: {}", id);
             PatientDto patient = patientService.getPatientById(id, session);
-            model.addAttribute("patient", patient);
-
             List<NoteDto> notes = noteService.getNotes(id, session);
-            model.addAttribute("notes", notes);
             NoteDto newNote = noteService.initNote(id, patient.getName());
+            AssessmentDto assessment = assessmentService.getAssessmentForPatient(session, patient);
+
+            model.addAttribute("patient", patient);
+            model.addAttribute("notes", notes);
             model.addAttribute("newNote", newNote);
+            model.addAttribute("assessment", assessment);
 
             return "patient";
         } catch (Exception e) {

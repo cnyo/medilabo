@@ -1,5 +1,6 @@
 package com.medilabo.assessment.controller;
 
+import com.medilabo.assessment.model.Assessment;
 import com.medilabo.assessment.proxies.note.MicroserviceNoteProxy;
 import com.medilabo.assessment.proxies.note.NoteDto;
 import com.medilabo.assessment.proxies.patient.MicroservicePatientProxy;
@@ -41,7 +42,7 @@ public class AssessmentController {
      * @return A ResponseEntity containing the assessment result as a String.
      */
     @GetMapping("/assessment/{patientId}")
-    public ResponseEntity<String> generateAssessment(@PathVariable int patientId) {
+    public ResponseEntity<Assessment> generateAssessment(@PathVariable int patientId) {
         log.info("Generating assessment for patient {}", patientId);
         PatientDto patient = patientProxy.getPatientById(patientId);
         List<NoteDto> notes = noteProxy.getNotesByPatientId(String.valueOf(patientId));
