@@ -6,6 +6,13 @@ import com.medilabo.assessment.proxies.patient.PatientDto;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
+/**
+ * Represents a rule for determining the risk level of a patient based on certain conditions.
+ * Each rule consists of:
+ * - A predicate to evaluate patient attributes
+ * - A predicate to evaluate the count of trigger terms found in patient notes.
+ * - An associated risk level if both predicates are satisfied.
+ */
 public class LevelRule {
     private Predicate<PatientDto> patientCondition;
     private LongPredicate countTermPredicate;

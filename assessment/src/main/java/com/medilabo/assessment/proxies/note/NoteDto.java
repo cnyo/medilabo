@@ -1,5 +1,8 @@
 package com.medilabo.assessment.proxies.note;
 
+/**
+ * Data Transfer Object (DTO) representing a note associated with a patient.
+ */
 public class NoteDto {
     private String id;
     private String patId;

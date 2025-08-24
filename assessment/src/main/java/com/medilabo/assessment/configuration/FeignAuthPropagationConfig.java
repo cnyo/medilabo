@@ -9,12 +9,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+/**
+ * Configuration class to propagate the Authorization header from incoming requests
+ * to outgoing Feign client requests.
+ */
 @Configuration
 public class FeignAuthPropagationConfig {
     private static final Logger log = LoggerFactory.getLogger(FeignExceptionConfig.class);
 
+    /** Interceptor to add the Authorization header from the current HTTP request
+     * to the Feign request template.
+     */
     @Bean
     public RequestInterceptor propagateAuthHeader() {
+        /** RequestInterceptor is a functional interface, so we can use a lambda expression here.
+         * However, for clarity and logging purposes, we use an anonymous class.
+         */
         return new RequestInterceptor() {
             @Override
             public void apply(feign.RequestTemplate template) {

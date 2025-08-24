@@ -6,6 +6,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.Period;
 
+/**
+ * Data Transfer Object (DTO) representing a patient.
+ * This class contains patient details such as ID, name, birth
+ */
 public class PatientDto {
     private int id;
     private String name;

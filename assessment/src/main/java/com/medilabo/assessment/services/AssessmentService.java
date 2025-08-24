@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * Service class to handle health risk assessments based on patient data and notes.
+ * It processes the assessment by counting trigger terms in notes and determining the risk level.
+ */
 @Service
 public class AssessmentService {
 
@@ -40,6 +44,13 @@ public class AssessmentService {
         this.resourceUrlProvider = resourceUrlProvider;
     }
 
+    /**
+     * Processes the health risk assessment for a given patient based on their notes.
+     *
+     * @param patient The patient data transfer object containing patient details.
+     * @param notes   A list of note data transfer objects associated with the patient.
+     * @return A String representing the determined risk level.
+     */
     public String processAssessment(PatientDto patient, List<NoteDto> notes) {
         log.debug("Processing assessment for patient: {}", String.valueOf(patient.getId()));
         long countFoundTerms = countTriggerTerms(notes);
@@ -47,16 +58,12 @@ public class AssessmentService {
         return determineRiskLevel(patient, countFoundTerms);
     }
 
-    private String determineRiskLevel(PatientDto patient, long countFoundTerms) {
-        log.debug("Determining risk level for patient: {}", String.valueOf(patient.getId()));
-
-        return RULES.stream()
-                .filter(rule -> rule.matches(patient, countFoundTerms))
-                .map(rule -> rule.getLevel().getLabel())
-                .findFirst()
-                .orElse(RiskLevel.NONE.getLabel());
-    }
-
+    /**
+     * Counts the occurrences of predefined trigger terms in a list of patient notes.
+     *
+     * @param notes A list of note data transfer objects associated with the patient.
+     * @return The total count of trigger term occurrences found in the notes.
+     */
     public long countTriggerTerms(List<NoteDto> notes) {
         log.debug("Counting trigger terms for patient: {}", String.valueOf(notes.get(0).getId()));
 
@@ -71,6 +78,13 @@ public class AssessmentService {
         ;
     }
 
+    /**
+     * Counts the occurrences of a specific trigger term pattern in a given note content.
+     *
+     * @param noteContent The content of the note to be analyzed.
+     * @param termPattern The regex pattern representing the trigger term to be counted.
+     * @return The count of occurrences of the trigger term in the note content.
+     */
     private long countOccurrences(String noteContent, Pattern termPattern) {
         log.debug("Counting occurrences for patient: {}", String.valueOf(noteContent));
 
@@ -78,5 +92,22 @@ public class AssessmentService {
                 .matcher(noteContent)
                 .results()
                 .count();
+    }
+
+    /**
+     * Determines the risk level for a patient based on their details and the count of found trigger terms.
+     *
+     * @param patient         The patient data transfer object containing patient details.
+     * @param countFoundTerms The count of trigger terms found in the patient's notes.
+     * @return A String representing the determined risk level.
+     */
+    private String determineRiskLevel(PatientDto patient, long countFoundTerms) {
+        log.debug("Determining risk level for patient: {}", String.valueOf(patient.getId()));
+
+        return RULES.stream()
+                .filter(rule -> rule.matches(patient, countFoundTerms))
+                .map(rule -> rule.getLevel().getLabel())
+                .findFirst()
+                .orElse(RiskLevel.NONE.getLabel());
     }
 }

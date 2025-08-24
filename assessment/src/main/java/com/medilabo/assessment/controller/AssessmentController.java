@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
+/**
+ * Controller class to handle assessment-related HTTP requests.
+ * It interacts with patient and note microservices to generate health risk assessments.
+ */
 @Controller
 public class AssessmentController {
 
@@ -29,6 +33,13 @@ public class AssessmentController {
         this.assessmentService = assessmentService;
     }
 
+    /**
+     * Endpoint to generate a health risk assessment for a patient based on their ID.
+     * It retrieves patient details and associated notes, then processes the assessment.
+     *
+     * @param patientId The ID of the patient for whom the assessment is to be generated.
+     * @return A ResponseEntity containing the assessment result as a String.
+     */
     @GetMapping("/assessment/{patientId}")
     public ResponseEntity<String> generateAssessment(@PathVariable int patientId) {
         log.info("Generating assessment for patient {}", patientId);

@@ -1,5 +1,9 @@
 package com.medilabo.assessment.enums;
 
+/**
+ * Enum representing various medical trigger terms.
+ * Each term is associated with a descriptive label.
+ */
 public enum TriggerTerm {
     HEMOGLOBUNE_A1C("Hémoglobine A1C"),
     MICROALBUMINE("Microalbumine"),
