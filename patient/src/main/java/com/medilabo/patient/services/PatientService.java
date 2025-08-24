@@ -2,15 +2,20 @@ package com.medilabo.patient.services;
 
 import com.medilabo.patient.model.Patient;
 import com.medilabo.patient.repository.PatientRepository;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Service
 public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
+
+    private static final Logger log = getLogger(PatientService.class);
 
     public List<Patient> findAll() {
         return patientRepository.findAll();

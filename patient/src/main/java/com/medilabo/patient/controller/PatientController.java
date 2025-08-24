@@ -8,7 +8,6 @@ import com.medilabo.patient.services.JsonFilterService;
 import com.medilabo.patient.services.PatientService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -23,6 +22,8 @@ import java.util.Objects;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Tag(name = "Patient", description = "Patient management operations")
 @RestController
 public class PatientController {
@@ -32,7 +33,7 @@ public class PatientController {
     private final JsonFilterService jsonFilterService;
     private final ApplicationPropertiesConfiguration appProperties;
 
-    private Logger logger = LoggerFactory.getLogger(PatientController.class);
+    private final Logger log = getLogger(PatientController.class);
 
     @Value("${server.instance.id}")
     String instanceId;
@@ -43,22 +44,13 @@ public class PatientController {
         this.appProperties = appProperties;
     }
 
-    @GetMapping("/patients/hello")
-    public String hello() {
-        String message = String.format("Hello %s!", instanceId);
-
-        logger.info(message);
-
-        return message;
-    }
-
     @Tag(name = "find all")
     @Tag(name = "findAllPatients", description = "Retrieve a list of all patients")
     @GetMapping("/patients")
     public MappingJacksonValue getPatientList() {
         List<Patient> patients = patientService.findAll();
         List<Patient> limitedListPatient = patients.subList(0, appProperties.getPatientsLimit());
-        logger.info("Retrieved {} patients", limitedListPatient.size());
+        log.info("Retrieved {} patients", limitedListPatient.size());
 
         return jsonFilterService.filterProperties(patients, PATIENT_FILTER, "createdAt", "updatedAt");
     }

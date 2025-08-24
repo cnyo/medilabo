@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 //@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "id"})
 @JsonFilter("patientFilter")
@@ -26,7 +26,7 @@ public class Patient {
     private String firstName;
 
     @Past
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Length(min = 1, max = 1)
     private String gender;
@@ -38,18 +38,6 @@ public class Patient {
     public Patient() {
 
     }
-
-//    public Patient(Long id, String name, String firstName, Date birthDate, String gender, String address, String phoneNumber) {
-//        this.id = id;
-//        this.name = name;
-//        this.firstName = firstName;
-//        this.birthDate = birthDate;
-//        this.gender = gender;
-//        this.address = address;
-//        this.phoneNumber = phoneNumber;
-//    }
-
-
 
     //    @JsonIgnore
     public void setId(int id) {
@@ -76,11 +64,11 @@ public class Patient {
         this.firstName = firstName;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
