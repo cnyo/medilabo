@@ -2,13 +2,13 @@ package com.medilabo.assessment.services;
 
 import com.medilabo.assessment.enums.RiskLevel;
 import com.medilabo.assessment.enums.TriggerTerm;
+import com.medilabo.assessment.model.Assessment;
 import com.medilabo.assessment.proxies.note.NoteDto;
 import com.medilabo.assessment.proxies.patient.PatientDto;
 import com.medilabo.assessment.rules.LevelRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.resource.ResourceUrlProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,12 +38,6 @@ public class AssessmentService {
             new LevelRule(p -> p.getAge() >= 30, count -> count >= 8, RiskLevel.EARLY_ONSET)
     );
 
-    private final ResourceUrlProvider resourceUrlProvider;
-
-    public AssessmentService(ResourceUrlProvider resourceUrlProvider) {
-        this.resourceUrlProvider = resourceUrlProvider;
-    }
-
     /**
      * Processes the health risk assessment for a given patient based on their notes.
      *
@@ -51,11 +45,11 @@ public class AssessmentService {
      * @param notes   A list of note data transfer objects associated with the patient.
      * @return A String representing the determined risk level.
      */
-    public String processAssessment(PatientDto patient, List<NoteDto> notes) {
-        log.debug("Processing assessment for patient: {}", String.valueOf(patient.getId()));
+    public Assessment processAssessment(PatientDto patient, List<NoteDto> notes) {
+        log.debug("Processing assessment for patient: {}", patient.getId());
         long countFoundTerms = countTriggerTerms(notes);
 
-        return determineRiskLevel(patient, countFoundTerms);
+        return new Assessment(patient.getId(), determineRiskLevel(patient, countFoundTerms));
     }
 
     /**

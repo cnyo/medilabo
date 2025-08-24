@@ -1,16 +1,15 @@
 package com.medilabo.assessment;
 
 import com.medilabo.assessment.enums.RiskLevel;
+import com.medilabo.assessment.model.Assessment;
 import com.medilabo.assessment.proxies.note.NoteDto;
 import com.medilabo.assessment.proxies.patient.PatientDto;
 import com.medilabo.assessment.services.AssessmentService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.servlet.resource.ResourceUrlProvider;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,13 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class AssessmentServiceTests {
 
-	private AssessmentService assessmentService;
-
-	@BeforeEach
-	void setUp() {
-		ResourceUrlProvider resourceUrlProvider = new ResourceUrlProvider();
-		this.assessmentService = new AssessmentService(resourceUrlProvider);
-	}
+	private final AssessmentService assessmentService = new AssessmentService();
 
 	@ParameterizedTest
 	@MethodSource("provideRiskCases")
@@ -40,10 +33,12 @@ class AssessmentServiceTests {
 		patient.setBirthDate(LocalDate.now().minusYears(age).withMonth(1).withDayOfMonth(1));
 
 		// Act
-		String result = assessmentService.processAssessment(patient, notes);
+		Assessment result = assessmentService.processAssessment(patient, notes);
 
 		// Assert
-		assertThat(result).isEqualTo(expected);
+		assertThat(result).isNotNull();
+		assertThat(result).isInstanceOf(Assessment.class);
+		assertThat(result.getRiskLevel()).isEqualTo(expected);
 	}
 
 	static Stream<Arguments> provideRiskCases() {
