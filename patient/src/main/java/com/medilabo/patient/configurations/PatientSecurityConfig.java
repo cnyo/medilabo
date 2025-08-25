@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -22,7 +24,7 @@ public class PatientSecurityConfig {
 
         userDetailsService.createUser(User
                 .withUsername("user")
-                .password("{noop}user")   // {noop} pour tests : mot de passe en clair
+                .password(passwordEncoder().encode("user"))
                 .roles("GATEWAY")
                 .build());
 
@@ -41,5 +43,10 @@ public class PatientSecurityConfig {
                 .httpBasic(withDefaults());
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
