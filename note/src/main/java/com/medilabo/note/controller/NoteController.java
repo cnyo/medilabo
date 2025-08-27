@@ -22,7 +22,7 @@ public class NoteController {
     @GetMapping("/patients/{patientId}/notes")
     public List<Note> getNotes(@PathVariable String patientId) {
 
-        List<Note> notes = noteService.getNoteByPatientId(patientId);
+        List<Note> notes = noteService.getNotesByPatientId(patientId);
         log.info("Notes for patient {} found: {}", patientId, notes.size());
 
         return notes;

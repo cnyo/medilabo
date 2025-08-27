@@ -17,7 +17,7 @@ public class NoteService {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(NoteService.class);
 
-    public List<Note> getNoteByPatientId(String patientId) {
+    public List<Note> getNotesByPatientId(String patientId) {
         List<Note> notes = noteRepository.findByPatId(patientId);
         log.debug("{} notes found", notes.size());
 
