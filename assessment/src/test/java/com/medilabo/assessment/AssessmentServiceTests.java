@@ -24,7 +24,7 @@ class AssessmentServiceTests {
 
 	@ParameterizedTest
 	@MethodSource("provideRiskCases")
-	void determineRiskLevel_shouldReturnExpectedLevel(int age, String gender, List<NoteDto> notes, String expected) {
+	void determineRiskLevel_shouldReturnExpectedLevel(int age, String gender, List<NoteDto> notes, String riskLevelExpected) {
 		// Arrange
 		PatientDto patient = new PatientDto();
 		patient.setGender(gender);
@@ -38,7 +38,7 @@ class AssessmentServiceTests {
 		// Assert
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(Assessment.class);
-		assertThat(result.getRiskLevel()).isEqualTo(expected);
+		assertThat(result.getRiskLevel()).isEqualTo(riskLevelExpected);
 	}
 
 	static Stream<Arguments> provideRiskCases() {
