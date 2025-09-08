@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -58,13 +59,13 @@ public class PatientController {
         try {
             log.info("Patient details: {}", id);
             PatientDto patient = patientService.getPatientById(id, session);
-            List<NoteDto> notes = noteService.getNotes(id, session);
             NoteDto newNote = noteService.initNote(id, patient.getName());
+            List<NoteDto> notes = noteService.getNotes(id, session);
             AssessmentDto assessment = assessmentService.getAssessmentForPatient(session, patient);
 
             model.addAttribute("patient", patient);
-            model.addAttribute("notes", notes);
             model.addAttribute("newNote", newNote);
+            model.addAttribute("notes", notes);
             model.addAttribute("assessment", assessment);
 
             return "patient";
