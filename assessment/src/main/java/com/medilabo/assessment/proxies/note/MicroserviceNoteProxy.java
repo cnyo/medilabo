@@ -11,7 +11,7 @@ import java.util.List;
  * Feign client interface to communicate with the Note microservice.
  * It defines methods to retrieve notes associated with a specific patient.
  */
-@FeignClient(name = "note-service", configuration = FeignAuthPropagationConfig.class)
+@FeignClient(name = "note-service", url = "http://note:9005",configuration = FeignAuthPropagationConfig.class)
 public interface MicroserviceNoteProxy {
 
     /**

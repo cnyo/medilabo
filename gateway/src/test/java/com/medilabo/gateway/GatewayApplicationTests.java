@@ -10,7 +10,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = {"httpbin=http://localhost:${wiremock.server.port}"})
+		properties = {"httpbin=http://gateway:${wiremock.server.port}"})
 @AutoConfigureWireMock(port = 0)
 class GatewayApplicationTests {
 

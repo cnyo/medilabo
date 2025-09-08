@@ -15,7 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @Configuration
 public class FeignAuthPropagationConfig {
-    private static final Logger log = LoggerFactory.getLogger(FeignExceptionConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(FeignAuthPropagationConfig.class);
 
     /** Interceptor to add the Authorization header from the current HTTP request
      * to the Feign request template.

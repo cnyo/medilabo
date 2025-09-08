@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * Feign client interface to communicate with the Patient microservice.
  * It defines methods to retrieve patient details by their ID.
  */
-@FeignClient(name = "patient-service", configuration = FeignAuthPropagationConfig.class)
+@FeignClient(name = "patient-service", url = "http://patient:9002", configuration = FeignAuthPropagationConfig.class)
 public interface MicroservicePatientProxy {
 
     /**

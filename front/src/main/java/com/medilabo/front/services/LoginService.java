@@ -53,7 +53,7 @@ public class LoginService {
         log.debug("getLoginResponse");
 
         return webClient.get()
-            .uri("http://localhost:9001/auth")
+            .uri("http://gateway:9001/auth")
             .headers(h -> h.set(HttpHeaders.AUTHORIZATION, basic))
             .retrieve()
             .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {

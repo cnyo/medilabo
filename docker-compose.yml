@@ -1,0 +1,83 @@
+services:
+  gateway:
+    build: ./gateway/
+    ports:
+      - "127.0.0.1:9001:9001"
+    depends_on:
+        - note
+        - patient
+        - assessment
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - medilabo-network
+
+  front:
+    build: ./front/
+    ports:
+      - "127.0.0.1:9003:9003"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - medilabo-network
+
+  patient:
+    build: ./patient/
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - medilabo-network
+
+  assessment:
+    build: ./assessment/
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - medilabo-network
+
+  note:
+      build: ./note/
+      depends_on:
+        - note-mongo
+      volumes:
+        - note_data:/app/data
+      environment:
+        - SPRING_PROFILES_ACTIVE=dev
+      networks:
+        - medilabo-network
+
+  note-mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: springuser
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: note
+    ports:
+        - "127.0.0.1:27018:27017"
+    volumes:
+      - note_mongo_data_volume:/data/db
+      - ./mongo-init/:/docker-entrypoint-initdb.d/
+    networks:
+      - medilabo-network
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://springuser:password@note-mongo:27017/admin
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
+      ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
+    networks:
+      - medilabo-network
+
+volumes:
+  note_data:
+  note_mongo_data_volume:
+
+networks:
+  medilabo-network:
+    driver: bridge

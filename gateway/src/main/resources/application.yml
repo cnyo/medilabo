@@ -21,23 +21,19 @@ spring:
               enabled: true
           routes:
             - id: api-note
-              uri: lb://note-service
+              uri: http://note:9005
               predicates:
                 - Path=/api/notes/**, /api/patients/*/notes/**
               filters:
                 - StripPrefix=1
-            #                - RemoveRequestHeader=Authorization
-            #                - AddRequestHeader=Authorization, Basic Z2F0ZXdheTpnYXRld2F5cGFzcw==   # base64("gateway:gatewaypass")
             - id: api-patient
-              uri: lb://patient-service
+              uri: http://patient:9002
               predicates:
                 - Path=/api/patients/**
               filters:
                 - StripPrefix=1
-            #                - RemoveRequestHeader=Authorization
-            #                - AddRequestHeader=Authorization, Basic Z2F0ZXdheTpnYXRld2F5cGFzcw==   # base64("gateway:gatewaypass")
             - id: api-assessment
-              uri: lb://assessment-service
+              uri: http://assessment:9006
               predicates:
                 - Path=/api/assessment/**
               filters:
@@ -48,10 +44,3 @@ logging:
     org:
       springframework:
         security: DEBUG
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:9004/eureka/

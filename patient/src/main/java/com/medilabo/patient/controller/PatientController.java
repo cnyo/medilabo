@@ -8,7 +8,6 @@ import com.medilabo.patient.services.JsonFilterService;
 import com.medilabo.patient.services.PatientService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +33,6 @@ public class PatientController {
     private final ApplicationPropertiesConfiguration appProperties;
 
     private final Logger log = getLogger(PatientController.class);
-
-    @Value("${server.instance.id}")
-    String instanceId;
 
     public PatientController(PatientService patientService, JsonFilterService jsonFilterService, ApplicationPropertiesConfiguration appProperties) {
         this.patientService = patientService;
