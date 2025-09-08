@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -73,18 +74,18 @@ public class PatientController {
         }
     }
 
-    @PostMapping(value="/update-patient/{id}")
-    public String updatePatient(@PathVariable int id, @ModelAttribute PatientDto updatedPatient, HttpSession session) {
+    @PostMapping(value="/patients/{id}")
+    public String updatePatient(@PathVariable int id, @ModelAttribute PatientDto updatedPatient, HttpSession session, RedirectAttributes redirectAttributes) {
         try {
             ResponseEntity<PatientDto> response = patientService.updatePatient(id, updatedPatient, session);
             log.info("Patient updated: {}", response.getBody());
 
-            // Todo: handle response status and errors
-
             return "redirect:/patients/" + id;
         } catch (WebClientResponseException e) {
             log.error("Error to update patient with ID {}: {}", id, e.getMessage());
-            return "redirect:/login?error";
+            redirectAttributes.addAttribute("error", true);
+
+            return "redirect:/patients/{id}";
         }
     }
 }

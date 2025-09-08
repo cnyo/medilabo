@@ -48,6 +48,7 @@ public class PatientController {
     @Tag(name = "findAllPatients", description = "Retrieve a list of all patients")
     @GetMapping("/patients")
     public MappingJacksonValue getPatientList() {
+        log.info("Get all patient list");
         List<Patient> patients = patientService.findAll();
         List<Patient> limitedListPatient = patients.subList(0, appProperties.getPatientsLimit());
         log.info("Retrieved {} patients", limitedListPatient.size());
@@ -72,6 +73,7 @@ public class PatientController {
     @PostMapping("/patients")
     public ResponseEntity<String> addPatient(@Valid @RequestBody Patient patient) {
         try {
+            log.info("Adding new patient: {}", patient);
             Patient patientAdded = patientService.save(patient);
 
             if (Objects.isNull(patientAdded)) {
@@ -96,6 +98,7 @@ public class PatientController {
     @Tag(name = "updatePatient", description = "Update an existing patient")
     @PutMapping("/patients/{id}")
     public ResponseEntity<MappingJacksonValue> updatePatient(@PathVariable int id, @Valid @RequestBody Patient patient) {
+        log.info("Updating patient with id: {}", id);
         Patient updatedPatient = patientService.update(id, patient);
 
         if (Objects.isNull(updatedPatient)) {

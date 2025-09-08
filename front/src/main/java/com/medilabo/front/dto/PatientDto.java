@@ -2,7 +2,7 @@ package com.medilabo.front.dto;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class PatientDto {
     private int id;
@@ -10,7 +10,7 @@ public class PatientDto {
     private String firstName;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     private String gender;
     private String address;
@@ -43,11 +43,11 @@ public class PatientDto {
         this.firstName = firstName;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

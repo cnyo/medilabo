@@ -15,7 +15,11 @@
     </form>
     <h1 class="text-center">Application MediLabo | Patients</h1>
     <div class="row">
-        <form action="" th:action="@{|/update-patient/${patient.id}|}" method="post" class="col-md-6 mx-auto">
+        <div th:if="${param.error}" style="color:red">
+            Une erreur est survenue lors de la mise à jour du patient.
+        </div>
+
+        <form action="" th:action="@{|/patients/${patient.id}|}" method="post" class="col-md-6 mx-auto">
             <div class="form-group row">
                 <label for="name" class="col-sm-2 col-form-label">Nom</label>
                 <div class="col-sm-10">
@@ -32,7 +36,7 @@
                 <label for="birthDate" class="col-sm-2 col-form-label">Date de naissance</label>
                 <div class="col-sm-10">
                     <input type="date" class="form-control" id="birthDate" name="birthDate"
-                           th:value="${patient.birthDate != null} ? ${#dates.format(patient.birthDate, 'yyyy-MM-dd')} : ''">
+                            th:value="${patient.birthDate != null ? #temporals.format(patient.birthDate, 'yyyy-MM-dd') : '' }">
                 </div>
             </div>
 
@@ -68,7 +72,7 @@
     </div>
 
     <h2>Assessment</h2>
-    <div class="row">
+    <div class="row" th:if="${assessment != null}">
         <div class="">
             <p th:text="${assessment.riskLevel}"></p>
         </div>
