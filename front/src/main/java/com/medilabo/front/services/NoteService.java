@@ -22,16 +22,22 @@ public class NoteService {
     }
 
     public List<NoteDto> getNotes(int patientId, HttpSession session) {
-        String auth = (String) session.getAttribute("authHeader");
-        log.debug("Fetching notes with auth: {}", auth);
+        try {
+            String auth = (String) session.getAttribute("authHeader");
+            log.debug("Fetching notes with auth: {}", auth);
 
-        return webClient.get()
-                .uri("/api/patients/" + patientId + "/notes")
-                .headers(header -> header.set(HttpHeaders.AUTHORIZATION, auth))
-                .retrieve()
-                .bodyToFlux(NoteDto.class)
-                .collectList()
-                .block();
+            return webClient.get()
+                    .uri("/api/patients/" + patientId + "/notes")
+                    .headers(header -> header.set(HttpHeaders.AUTHORIZATION, auth))
+                    .retrieve()
+                    .bodyToFlux(NoteDto.class)
+                    .collectList()
+                    .block();
+        } catch (Exception e) {
+            log.error("Error fetching notes for patient with ID {}: {}", patientId, e.getMessage());
+            return List.of();
+        }
+
     }
 
     public ResponseEntity<NoteDto> addNote(String patientId, NoteDto note, HttpSession session) {

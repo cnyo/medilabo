@@ -21,14 +21,24 @@ public class AssessmentService {
     }
 
     public AssessmentDto getAssessmentForPatient(HttpSession session, PatientDto patient) {
-        String auth = (String) session.getAttribute("authHeader");
-        log.debug("Fetching assessment for patient {} with auth: {}", patient.getId(), auth);
+        try {
+            if (patient == null) {
+                log.error("Patient is null, cannot fetch assessment.");
+                throw new RuntimeException("Patient is null, cannot fetch assessment.");
+            }
 
-        return webClient.get()
-                .uri(BASE_PATH + "/" + patient.getId())
-                .headers(header -> header.set(HttpHeaders.AUTHORIZATION, auth))
-                .retrieve()
-                .bodyToMono(AssessmentDto.class)
-                .block();
+            String auth = (String) session.getAttribute("authHeader");
+            log.debug("Fetching assessment for patient {} with auth: {}", patient.getId(), auth);
+
+            return webClient.get()
+                    .uri(BASE_PATH + "/" + patient.getId())
+                    .headers(header -> header.set(HttpHeaders.AUTHORIZATION, auth))
+                    .retrieve()
+                    .bodyToMono(AssessmentDto.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Error validating patient: {}", e.getMessage());
+            return null;
+        }
     }
 }
