@@ -2,9 +2,10 @@ package com.medilabo.assessment;
 
 import com.medilabo.assessment.enums.RiskLevel;
 import com.medilabo.assessment.model.Assessment;
-import com.medilabo.assessment.proxies.note.NoteDto;
 import com.medilabo.assessment.proxies.patient.PatientDto;
 import com.medilabo.assessment.services.AssessmentService;
+import com.medilabo.assessment.tree.MedicalRiskDecisionTree;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,7 +13,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,6 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AssessmentServiceTests {
 
 	private final AssessmentService assessmentService = new AssessmentService();
+	private MedicalRiskDecisionTree decisionTree;
+
+	@BeforeEach
+	void setUp() {
+		decisionTree = new MedicalRiskDecisionTree();
+	}
 
 	@ParameterizedTest
 	@MethodSource("provideRiskCases")
@@ -39,6 +45,22 @@ class AssessmentServiceTests {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(Assessment.class);
 		assertThat(result.getRiskLevel()).isEqualTo(riskLevelExpected);
+	}
+
+	@ParameterizedTest
+	@MethodSource("provideRiskCases")
+	void determineRiskLevel_WithTree(int age, String gender, int triggerCount, String riskLevelExpected) {
+		// Arrange
+		PatientDto patient = new PatientDto();
+		patient.setGender(gender);
+		patient.setName("Patient1");
+		patient.setFirstName("anyFirstName");
+		patient.setBirthDate(LocalDate.now().minusYears(age).withMonth(1).withDayOfMonth(1));
+
+		RiskLevel result = decisionTree.evaluateRisk(patient, triggerCount);
+
+		assertThat(result).isNotNull();
+		assertThat(result.getLabel()).isEqualTo(riskLevelExpected);
 	}
 
 	static Stream<Arguments> provideRiskCases() {

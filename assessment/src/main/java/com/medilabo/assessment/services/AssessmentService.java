@@ -6,6 +6,7 @@ import com.medilabo.assessment.model.Assessment;
 import com.medilabo.assessment.proxies.note.NoteDto;
 import com.medilabo.assessment.proxies.patient.PatientDto;
 import com.medilabo.assessment.rules.LevelRule;
+import com.medilabo.assessment.tree.MedicalRiskDecisionTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,8 @@ public class AssessmentService {
             new LevelRule(p -> p.getAge() >= 30, count -> count >= 8, RiskLevel.EARLY_ONSET)
     );
 
+    public final MedicalRiskDecisionTree decisionTree = new MedicalRiskDecisionTree();
+
     /**
      * Processes the health risk assessment for a given patient based on their notes.
      *
@@ -47,9 +50,10 @@ public class AssessmentService {
      */
     public Assessment processAssessment(PatientDto patient, int triggerCount) {
         log.debug("Processing assessment for patient: {}", patient.getId());
-        long countFoundTerms = countTriggerTerms(notes);
 
-        return new Assessment(patient.getId(), determineRiskLevel(patient, countFoundTerms));
+        // Uncomment if using the decision tree to determine risk level
+        // return new Assessment(patient.getId(), decisionTree.evaluateRisk(patient, triggerCount).getLabel());
+
         return new Assessment(patient.getId(), determineRiskLevel(patient, triggerCount));
     }
 
@@ -59,7 +63,7 @@ public class AssessmentService {
      * @param notes A list of note data transfer objects associated with the patient.
      * @return The total count of trigger term occurrences found in the notes.
      */
-    public long countTriggerTerms(List<NoteDto> notes) {
+    public int countTriggerTerms(List<NoteDto> notes) {
         log.debug("Counting trigger terms for patient: {}", String.valueOf(notes.get(0).getId()));
 
         return notes.stream()
