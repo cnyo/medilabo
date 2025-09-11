@@ -4,7 +4,7 @@ services:
     ports:
       - "127.0.0.1:9001:9001"
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     networks:
       - medilabo-network
 
@@ -13,7 +13,7 @@ services:
     ports:
       - "127.0.0.1:9003:9003"
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     depends_on:
       - gateway
     networks:
@@ -22,7 +22,7 @@ services:
   patient:
     build: ./patient/
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     depends_on:
       - gateway
     networks:
@@ -31,31 +31,31 @@ services:
   assessment:
     build: ./assessment/
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
-#  note:
-#      build: ./note/
-#      depends_on:
-#        - note-mongo
-#        - gateway
-#      volumes:
-#        - note_data:/app/data
-#      environment:
-#        - SPRING_PROFILES_ACTIVE=dev
-#      networks:
-#        - medilabo-network
+  note:
+      build: ./note/
+      depends_on:
+        - note-mongo
+        - gateway
+      volumes:
+        - note_data:/app/data
+      environment:
+        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      networks:
+        - medilabo-network
 
   note-mongo:
     image: mongo
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: springuser
-      MONGO_INITDB_ROOT_PASSWORD: password
-      MONGO_INITDB_DATABASE: note
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     ports:
         - "127.0.0.1:27018:27017"
     volumes:
@@ -72,8 +72,8 @@ services:
     environment:
       ME_CONFIG_MONGODB_URL: mongodb://springuser:password@note-mongo:27017/admin
       ME_CONFIG_BASICAUTH_ENABLED: true
-      ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
-      ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
     networks:
       - medilabo-network
 
