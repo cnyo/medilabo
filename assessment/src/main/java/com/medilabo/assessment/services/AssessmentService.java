@@ -45,11 +45,12 @@ public class AssessmentService {
      * @param notes   A list of note data transfer objects associated with the patient.
      * @return A String representing the determined risk level.
      */
-    public Assessment processAssessment(PatientDto patient, List<NoteDto> notes) {
+    public Assessment processAssessment(PatientDto patient, int triggerCount) {
         log.debug("Processing assessment for patient: {}", patient.getId());
         long countFoundTerms = countTriggerTerms(notes);
 
         return new Assessment(patient.getId(), determineRiskLevel(patient, countFoundTerms));
+        return new Assessment(patient.getId(), determineRiskLevel(patient, triggerCount));
     }
 
     /**
@@ -65,8 +66,8 @@ public class AssessmentService {
                 .map(NoteDto::getNote)
                 .filter(Objects::nonNull)
                 .map(String::toLowerCase)
-                .flatMapToLong(noteContent ->
-                        TRIGGER_TERMS.stream().mapToLong(termPattern -> countOccurrences(noteContent, termPattern))
+                .flatMapToInt(noteContent ->
+                        TRIGGER_TERMS.stream().mapToInt(termPattern -> countOccurrences(noteContent, termPattern))
                 )
                 .sum()
         ;
@@ -79,10 +80,10 @@ public class AssessmentService {
      * @param termPattern The regex pattern representing the trigger term to be counted.
      * @return The count of occurrences of the trigger term in the note content.
      */
-    private long countOccurrences(String noteContent, Pattern termPattern) {
+    private int countOccurrences(String noteContent, Pattern termPattern) {
         log.debug("Counting occurrences for patient: {}", String.valueOf(noteContent));
 
-        return termPattern
+        return (int) termPattern
                 .matcher(noteContent)
                 .results()
                 .count();

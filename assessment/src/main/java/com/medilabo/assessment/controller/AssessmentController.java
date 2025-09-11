@@ -46,8 +46,9 @@ public class AssessmentController {
         log.info("Generating assessment for patient {}", patientId);
         PatientDto patient = patientProxy.getPatientById(patientId);
         List<NoteDto> notes = noteProxy.getNotesByPatientId(String.valueOf(patientId));
+        int countFoundTerms = assessmentService.countTriggerTerms(notes);
         log.debug("notes found: {}", notes.size());
 
-        return ResponseEntity.ok(assessmentService.processAssessment(patient, notes));
+        return ResponseEntity.ok(assessmentService.processAssessment(patient, countFoundTerms));
     }
 }
