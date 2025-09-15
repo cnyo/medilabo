@@ -23,6 +23,8 @@ services:
     build: ./patient/
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    ports:
+      - "127.0.0.1:9002:9002"
     depends_on:
       - gateway
     networks:
