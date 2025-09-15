@@ -57,8 +57,6 @@ public class AssessmentSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                                 .anyRequest().permitAll()
-//                        .anyRequest().authenticated()
-//                        .anyRequest().access(hasIpAddress("127.0.0.1"))
                 )
                 .httpBasic(withDefaults());
 

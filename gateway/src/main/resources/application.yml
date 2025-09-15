@@ -5,13 +5,6 @@ spring:
   application:
     name: gateway-service
 
-# Config Server
-#  config:
-#    import:
-#        - optional:configserver:http://localhost:9000/
-#         Uncomment the line below if you want to use a local config server
-#         - optional:configserver:file:./config/
-
   cloud:
     gateway:
       server:
