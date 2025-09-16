@@ -20,6 +20,18 @@
             Une erreur est survenue lors de la mise à jour du patient.
         </div>
 
+        <!-- 🎯 Messages Flash -->
+        <div th:if="${successMessage}"
+             class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Succès !</strong> <span th:text="${successMessage}"></span>
+        </div>
+
+        <div th:if="${errorMessage}"
+             class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Erreur !</strong> <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
         <form action="" th:action="@{|/patients/${patient.id}|}" method="post" class="col-md-6 mx-auto">
             <div class="form-group row">
                 <label for="name" class="col-sm-2 col-form-label">Nom</label>
@@ -100,6 +112,23 @@
                 <li class="card-title" th:each="note : ${notes}" th:text="${note.note}"></li>
             </ul>
         </div>
+    </div>
+
+    <div>
+        <h3>Les termes déclencheurs</h3>
+        <ul>
+            <li>Hémoglobine A1C</li>
+            <li>Microalbumine</li>
+            <li>Taille</li>
+            <li>Poids</li>
+            <li>Fumeur, Fumeuse</li>
+            <li>Anormal</li>
+            <li>Cholestérol</li>
+            <li>Vertiges</li>
+            <li>Rechute</li>
+            <li>Réaction</li>
+            <li>Anticorps</li>
+        </ul>
     </div>
 </div>
 

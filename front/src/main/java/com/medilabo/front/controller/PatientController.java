@@ -76,17 +76,21 @@ public class PatientController {
     }
 
     @PostMapping(value="/patients/{id}")
-    public String updatePatient(@PathVariable int id, @ModelAttribute PatientDto updatedPatient, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String updatePatient(
+            @PathVariable int id,
+            @ModelAttribute PatientDto updatedPatient,
+            HttpSession session,
+            RedirectAttributes redirectAttributes
+    ) {
         try {
             ResponseEntity<PatientDto> response = patientService.updatePatient(id, updatedPatient, session);
             log.info("Patient updated: {}", response.getBody());
-
-            return "redirect:/patients/" + id;
+            redirectAttributes.addFlashAttribute("successMessage", "Patient mise à jour avec succès");
         } catch (WebClientResponseException e) {
             log.error("Error to update patient with ID {}: {}", id, e.getMessage());
-            redirectAttributes.addAttribute("error", true);
-
-            return "redirect:/patients/{id}";
+            redirectAttributes.addAttribute("errorMessage", "Erreur lors de la mise à jour du patient: " + e.getResponseBodyAsString());
         }
+
+        return "redirect:/patients/{id}";
     }
 }
