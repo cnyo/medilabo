@@ -1,5 +1,5 @@
 # -------------------------
-# 1. Build Stage
+# 1. Build Stage - Isole le processus de compilation
 # -------------------------
 FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
@@ -16,7 +16,8 @@ RUN ./mvnw package -DskipTests
 
 
 # -------------------------
-# 2. Run Stage
+# 2. Run Stage, produit une image finale optimisée, sécurisée et portable
+# Ne copie que le .jar final
 # -------------------------
 FROM eclipse-temurin:17-jre
 WORKDIR /app
