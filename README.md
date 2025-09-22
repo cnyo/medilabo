@@ -71,7 +71,8 @@ volumes:
 ```  
 
 ## Améliorations futures
-1. Green Code
+## Green Code
+* librairie CSS plus légère
 * Utilisation de CDN
 * Utilisation de DTO pour optimiser les réponses
 * Centralisation des logs
