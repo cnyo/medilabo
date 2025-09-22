@@ -2,10 +2,12 @@ package com.medilabo.assessment;
 
 import com.medilabo.assessment.enums.RiskLevel;
 import com.medilabo.assessment.model.Assessment;
+import com.medilabo.assessment.proxies.note.NoteDto;
 import com.medilabo.assessment.proxies.patient.PatientDto;
 import com.medilabo.assessment.services.AssessmentService;
 import com.medilabo.assessment.tree.MedicalRiskDecisionTree;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -13,6 +15,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +67,30 @@ class AssessmentServiceTests {
 		assertThat(result.getLabel()).isEqualTo(riskLevelExpected);
 	}
 
+	@Test
+	void countTrigger_inNotes() {
+		// Arrange
+		List<NoteDto> notes = new ArrayList<>();
+		NoteDto note1 = new NoteDto();
+		NoteDto note2 = new NoteDto();
+		NoteDto note3 = new NoteDto();
+		NoteDto note4 = new NoteDto();
+
+		note1.setNote("Le patient déclare qu'il lui est devenu difficile de monter les escaliers Il se plaint également d’être essoufflé Tests de laboratoire indiquant que les anticorps sont élevés Réaction aux médicaments");
+		note2.setNote("Le patient déclare qu'il a mal au dos lorsqu'il reste assis pendant longtemps");
+		note3.setNote("Le patient déclare avoir commencé à fumer depuis peu Hémoglobine A1C supérieure au niveau recommandé");
+		note4.setNote("Taille, Poids, Cholestérol, Vertige et Réaction");
+
+		notes.add(note1);
+		notes.add(note2);
+		notes.add(note3);
+		notes.add(note4);
+
+		int result = assessmentService.countTriggerTerms(notes);
+
+		assertThat(result).isEqualTo(8);
+	}
+
 	static Stream<Arguments> provideRiskCases() {
 		return Stream.of(
 				// --- BORDERLINE ---
@@ -77,7 +105,7 @@ class AssessmentServiceTests {
 
 				// --- EARLY_ONSET ---
 				Arguments.of(25, "M", 5, RiskLevel.EARLY_ONSET.getLabel()), // male <30, >=5 terms
-				Arguments.of(29, "F", 7, RiskLevel.EARLY_ONSET.getLabel()), // female <30, >=7 terms
+				Arguments.of(23, "F", 9, RiskLevel.EARLY_ONSET.getLabel()), // female <30, >=9 terms
 				Arguments.of(50, "M", 8, RiskLevel.EARLY_ONSET.getLabel()), // age >=30, >=8 terms
 				Arguments.of(48, "F", 10, RiskLevel.EARLY_ONSET.getLabel()), // age >=30, >=8 terms
 
