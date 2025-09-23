@@ -30,10 +30,10 @@ public class AssessmentService {
             .toList();
 
     private static final List<LevelRule> RULES = List.of(
-            new LevelRule(p -> p.getAge() > 30, count -> count >= 2 && count <= 5, RiskLevel.BORDERLINE),
+            new LevelRule(p -> p.getAge() > 30, count -> count > 2 && count <= 5, RiskLevel.BORDERLINE),
             new LevelRule(p -> p.isMale() && p.getAge() < 30, count -> count == 3, RiskLevel.IN_DANGER),
             new LevelRule(p -> p.isFemale() && p.getAge() < 30, count -> count == 4, RiskLevel.IN_DANGER),
-            new LevelRule(p -> p.getAge() >= 30, count -> count == 6 || count == 7, RiskLevel.IN_DANGER),
+            new LevelRule(p -> p.getAge() >= 30, count -> count > 5 && count <= 7, RiskLevel.IN_DANGER),
             new LevelRule(p -> p.isMale() && p.getAge() < 30, count -> count >= 5, RiskLevel.EARLY_ONSET),
             new LevelRule(p -> p.isFemale() && p.getAge() < 30, count -> count >= 7, RiskLevel.EARLY_ONSET),
             new LevelRule(p -> p.getAge() >= 30, count -> count >= 8, RiskLevel.EARLY_ONSET)

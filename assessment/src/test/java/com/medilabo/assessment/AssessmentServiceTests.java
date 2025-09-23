@@ -68,7 +68,7 @@ class AssessmentServiceTests {
 	}
 
 	@Test
-	void countTrigger_inNotes() {
+	void countTrigger_inNotes_forEarlyOnsetRisk() {
 		// Arrange
 		List<NoteDto> notes = new ArrayList<>();
 		NoteDto note1 = new NoteDto();
@@ -91,10 +91,23 @@ class AssessmentServiceTests {
 		assertThat(result).isEqualTo(8);
 	}
 
+	@Test
+	void countTrigger_inNotes_forNoneRisk() {
+		// Arrange
+		List<NoteDto> notes = new ArrayList<>();
+		NoteDto note = new NoteDto();
+		note.setNote("Le patient déclare qu'il 'se sent très bien' Poids égal ou inférieur au poids recommandé");
+		notes.add(note);
+
+		int result = assessmentService.countTriggerTerms(notes);
+
+		assertThat(result).isEqualTo(1);
+	}
+
 	static Stream<Arguments> provideRiskCases() {
 		return Stream.of(
 				// --- BORDERLINE ---
-				Arguments.of(31, "M", 2, RiskLevel.BORDERLINE.getLabel()),
+				Arguments.of(31, "M", 3, RiskLevel.BORDERLINE.getLabel()),
 				Arguments.of(45, "F", 5, RiskLevel.BORDERLINE.getLabel()),
 
 				// --- IN_DANGER ---
@@ -110,6 +123,7 @@ class AssessmentServiceTests {
 				Arguments.of(48, "F", 10, RiskLevel.EARLY_ONSET.getLabel()), // age >=30, >=8 terms
 
 				// --- NONE ---
+				Arguments.of(50, "F", 2, RiskLevel.NONE.getLabel()),
 				Arguments.of(20, "M", 1, RiskLevel.NONE.getLabel()),
 				Arguments.of(35, "F", 0, RiskLevel.NONE.getLabel())
 		);

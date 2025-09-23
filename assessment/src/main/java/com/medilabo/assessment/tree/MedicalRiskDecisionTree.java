@@ -46,10 +46,10 @@ public class MedicalRiskDecisionTree {
      * @return A {@link DecisionNode} for older patients.
      */
     private DecisionNode buildOldRules() {
-        return DecisionTreeBuilder.triggerBetween(2, 5).then(
-                DecisionTreeBuilder.leaf(RiskLevel.BORDERLINE),    // ← Si 2-5 triggers
-                DecisionTreeBuilder.triggerBetween(6, 7).then(     // ← Sinon, teste 6-7
-                        DecisionTreeBuilder.leaf(RiskLevel.IN_DANGER), // ← Si 6-7 triggers
+        return DecisionTreeBuilder.triggerBetween(3, 5).then(
+                DecisionTreeBuilder.leaf(RiskLevel.BORDERLINE),
+                DecisionTreeBuilder.triggerBetween(5, 7).then(     // ← Sinon, teste 5-7
+                        DecisionTreeBuilder.leaf(RiskLevel.IN_DANGER), // ← Si 5-7 triggers
                         DecisionTreeBuilder.triggerGreaterOrEqual(8).then(  // ← Sinon, teste >= 8
                                 DecisionTreeBuilder.leaf(RiskLevel.EARLY_ONSET), // ← Si >= 8 triggers
                                 DecisionTreeBuilder.leaf(RiskLevel.NONE)          // ← Sinon (0-1 trigger)
@@ -111,7 +111,7 @@ public class MedicalRiskDecisionTree {
         return DecisionTreeBuilder.triggerEquals(4).then(
                 DecisionTreeBuilder.leaf(RiskLevel.IN_DANGER), // ← Si 3 triggers
                 DecisionTreeBuilder.triggerGreaterOrEqual(7).then(
-                        DecisionTreeBuilder.leaf(RiskLevel.EARLY_ONSET), // ← Si >= 5 triggers
+                        DecisionTreeBuilder.leaf(RiskLevel.EARLY_ONSET), // ← Si >= 7 triggers
                         DecisionTreeBuilder.leaf(RiskLevel.NONE)          // ← Sinon 0-2 triggers
                 )
         );
