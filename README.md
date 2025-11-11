@@ -33,33 +33,34 @@ Chaque service est isolé, packagé dans une image Docker, et déployé via **Do
 
 ---  
 
-## Lancement du projet
-
-1. **Cloner le dépôt** :
+## Cloner le dépôt
 ```bash  
 git clone https://github.com/cnyo/medilabo.git```  
 ```
 
-2. **Construire et lancer l’application avec Docker Compose**
-```bash  
-docker compose up --build -d
-```  
-
 ## Configuration
-1. Variables d’environnement principales (dans un .env par exemple)
-```yaml  
-# MongoDB Configuration  
-MONGO_USERNAME=mongo_user  
-MONGO_PASSWORD=secure_password  
-MONGO_DATABASE=name_db  
-  
- # Mongo Express ConfigurationMONGO_EXPRESS_USERNAME=admin  
-MONGO_EXPRESS_PASSWORD=admin_password  
-  
- # Spring ProfilesSPRING_PROFILES_ACTIVE=dev  
+1. **Exemple de configuration des variables d'environnement**
+```dotenv
+# .env file
+
+# Development environment
+DOCKERFILE=Dockerfile.dev
+SPRING_PROFILES_ACTIVE=dev
+
+# Enable volume mounting for hot reload
+FRONT_VOLUMES=./front/src:/app/src:delegated, ./front/src/css:/app/src/css:delegated
+
+# MongoDB Configuration
+MONGO_USERNAME=mongo_user
+MONGO_PASSWORD=secure_password
+MONGO_DATABASE=name_db
+
+# Mongo Express Configuration
+MONGO_EXPRESS_USERNAME=admin
+MONGO_EXPRESS_PASSWORD=admin_password
 ```  
 
-2. Données d’exemple
+2. **Données d’exemple**
 
 Un fichier data.json est utilisé pour initialiser MongoDB avec des données de test lors du démarrage des conteneurs.  
 Ce fichier est monté dans le conteneur grâce à :
@@ -70,12 +71,26 @@ volumes:
  - ./src/resources:/docker-entrypoint-initdb.d  
 ```  
 
+## Environnement de production
+Utiliser le .env par défaut
+```bash
+docker compose up --build -d
+```
+
+## Environnement de dev
+Utiliser le .env.dev
+```bash 
+docker compose --env-file .env.dev up --build
+```
+
 ## Améliorations futures
-## Green Code
+### Green Code
 * librairie CSS plus légère
 * Utilisation de CDN
 * Utilisation de DTO pour optimiser les réponses
 * Centralisation des logs
 
-2. autre amélioration possible
+### Autres amélioration possible
 * Arbre de décision pour le calcul du risque (gestion plus pratique et sûr en cas de nouvelles règles à intégrer)
+* Intégrer Tailwindcss
+* environnement de dev avec docker-compose pour le hot reload
