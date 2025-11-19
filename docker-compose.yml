@@ -1,6 +1,7 @@
 services:
   gateway:
-    build: ./gateway/
+    image: ydiouy/medilabo-gateway:1.0.0
+#    build: ./gateway/
     ports:
       - "127.0.0.1:9001:9001"
     environment:
@@ -9,18 +10,23 @@ services:
       - medilabo-network
 
   front:
-    build: ./front/
+    image: ydiouy/medilabo-front:1.0.0
+#      context: ./front/
+#      dockerfile: Dockerfile.test
+#      target: development
     ports:
-      - "127.0.0.1:9003:9003"
+      - "9003:9003"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SERVER_ADDRESS=0.0.0.0
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
   patient:
-    build: ./patient/
+    image: ydiouy/medilabo-patient:1.0.0
+#    build: ./patient/
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     ports:
@@ -31,7 +37,8 @@ services:
       - medilabo-network
 
   assessment:
-    build: ./assessment/
+    image: ydiouy/medilabo-assessment:1.0.0
+#    build: ./assessment/
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     depends_on:
@@ -40,16 +47,17 @@ services:
       - medilabo-network
 
   note:
-      build: ./note/
-      depends_on:
-        - note-mongo
-        - gateway
-      volumes:
-        - note_data:/app/data
-      environment:
-        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      networks:
-        - medilabo-network
+    image: ydiouy/medilabo-note:1.0.0
+#      build: ./note/
+    depends_on:
+      - note-mongo
+      - gateway
+    volumes:
+      - note_data:/app/data
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    networks:
+      - medilabo-network
 
   note-mongo:
     image: mongo

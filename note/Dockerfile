@@ -1,34 +1,25 @@
 # -------------------------
-# 1. Build Stage - Isole le processus de compilation
+# 1. Build maven
 # -------------------------
-FROM eclipse-temurin:17-jdk AS build
+FROM maven:eclipse-temurin AS backend-builder
 WORKDIR /app
 
-# Pre-download dependencies
-COPY pom.xml mvnw ./
-COPY mvnw ./
-COPY .mvn .mvn
-RUN ./mvnw dependency:go-offline -B
+# Copier le pom.xml puis télécharger les dépendances
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
 
-# Copy source code and build the application
 COPY src ./src
-RUN ./mvnw package -DskipTests
 
+# Build du jar Spring Boot
+RUN mvn -B clean package -DskipTests
 
 # -------------------------
-# 2. Run Stage, produit une image finale optimisée, sécurisée et portable
-# Ne copie que le .jar final
+# 2. Stage final
 # -------------------------
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Use --no-install-recommends to reduce image size
-RUN apt-get update && apt-get install -y --no-install-recommends dumb-init \
-    # Clean up apt cache to reduce image size
-    && rm -rf /var/lib/apt/lists/*
-# Copy the built jar from the build stage
-COPY --from=build /app/target/*.jar app.jar
+# Copier uniquement le JAR (sans sources, sans dépendances inutiles)
+COPY --from=backend-builder /app/target/*.jar app.jar
 
-# Use dumb-init to handle PID 1 issues
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
