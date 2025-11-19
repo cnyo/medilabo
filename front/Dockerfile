@@ -17,7 +17,7 @@ RUN npm run build
 # -------------------------
 # 2. Build maven
 # -------------------------
-FROM maven:3.9.11-eclipse-temurin-alpine as backend-builder
+FROM maven:eclipse-temurin AS backend-builder
 WORKDIR /app
 
 # Copier le pom.xml puis télécharger les dépendances
