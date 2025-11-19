@@ -64,6 +64,11 @@ public class AssessmentService {
      * @return The total count of trigger term occurrences found in the notes.
      */
     public int countTriggerTerms(List<NoteDto> notes) {
+        if (notes.isEmpty()) {
+            log.debug("No notes found for patient");
+            return 0;
+        }
+
         log.debug("Counting trigger terms for patient: {}", String.valueOf(notes.get(0).getId()));
 
         return notes.stream()

@@ -38,7 +38,7 @@ public class AssessmentService {
                     .block();
         } catch (Exception e) {
             log.error("Error validating patient: {}", e.getMessage());
-            return null;
+            return new AssessmentDto();
         }
     }
 }
