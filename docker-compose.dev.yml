@@ -5,8 +5,8 @@ services:
       - "9001:9001"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-    volumes:
-      - ./gateway:/app
+#    volumes:
+#      - ./gateway:/app
     networks:
       - medilabo-network
 
@@ -17,8 +17,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     #      - SERVER_ADDRESS=0.0.0.0
-    volumes:
-      - ./front:/app
+#    volumes:
+#      - ./front:/app
     depends_on:
       - gateway
     networks:
@@ -30,8 +30,8 @@ services:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     ports:
       - "9002:9002"
-    volumes:
-      - ./patient:/app
+#    volumes:
+#      - ./patient:/app
     depends_on:
       - gateway
     networks:
@@ -41,8 +41,8 @@ services:
     build: ./assessment
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-    volumes:
-      - ./assessment:/app
+#    volumes:
+#      - ./assessment:/app
     depends_on:
       - gateway
     networks:
@@ -61,8 +61,8 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
       MONGO_URI: mongodb://note-mongo:27017/${MONGO_INITDB_DATABASE}
 #      MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/${MONGO_INITDB_DATABASE}?authSource=admin
-    volumes:
-      - ./gateway:/app
+#    volumes:
+#      - ./note:/app
     networks:
       - medilabo-network
 
