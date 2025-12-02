@@ -1,6 +1,8 @@
 services:
   gateway:
     image: ydiouy/medilabo-gateway:latest
+    ports:
+      - "9001:9001"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     networks:
