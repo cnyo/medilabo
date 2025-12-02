@@ -41,6 +41,8 @@ services:
     build: ./assessment
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    ports:
+      - "9006:9006"
 #    volumes:
 #      - ./assessment:/app
     depends_on:
@@ -55,12 +57,9 @@ services:
       - gateway
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      MONGO_INITDB_SERVER: note-mongo
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
-      MONGO_URI: mongodb://note-mongo:27017/${MONGO_INITDB_DATABASE}
-#      MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/${MONGO_INITDB_DATABASE}?authSource=admin
+      MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/${MONGO_INITDB_DATABASE}?authSource=admin
+    ports:
+      - "9005:9005"
 #    volumes:
 #      - ./note:/app
     networks:
