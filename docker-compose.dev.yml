@@ -1,41 +1,55 @@
 services:
   gateway:
-    image: ydiouy/medilabo-gateway:1.0.0
+    build: ./gateway
+    ports:
+      - "9001:9001"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    volumes:
+      - ./gateway:/app
     networks:
       - medilabo-network
 
   front:
-    image: ydiouy/medilabo-front:1.0.0
+    build: ./front
+    ports:
+      - "9003:9003"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-#      - SERVER_ADDRESS=0.0.0.0
+    #      - SERVER_ADDRESS=0.0.0.0
+    volumes:
+      - ./front:/app
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
   patient:
-    image: ydiouy/medilabo-patient:1.0.0
+    build: ./patient
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    ports:
+      - "9002:9002"
+    volumes:
+      - ./patient:/app
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
   assessment:
-    image: ydiouy/medilabo-assessment:1.0.0
+    build: ./assessment
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    volumes:
+      - ./assessment:/app
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
   note:
-    image: ydiouy/medilabo-note:1.0.1
+    build: ./note
     depends_on:
       - note-mongo
       - gateway
@@ -43,23 +57,27 @@ services:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_SERVER: note-mongo
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
       MONGO_URI: mongodb://note-mongo:27017/${MONGO_INITDB_DATABASE}
+#      MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/${MONGO_INITDB_DATABASE}?authSource=admin
+    volumes:
+      - ./gateway:/app
     networks:
       - medilabo-network
 
   note-mongo:
     image: mongo
     restart: always
+    ports:
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
-    ports:
-        - "27017:27017"
     volumes:
       - note_mongo_data:/data/db
-      - ./init:/docker-entrypoint-initdb.d/
+      - ./init:/docker-entrypoint-initdb.d:ro
     networks:
       - medilabo-network
 
