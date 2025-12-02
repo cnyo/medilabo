@@ -1,13 +1,13 @@
 services:
   gateway:
-    image: ydiouy/medilabo-gateway:1.0.0
+    image: ydiouy/medilabo-gateway:latest
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     networks:
       - medilabo-network
 
   front:
-    image: ydiouy/medilabo-front:1.0.0
+    image: ydiouy/medilabo-front:latest
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
 #      - SERVER_ADDRESS=0.0.0.0
@@ -17,7 +17,7 @@ services:
       - medilabo-network
 
   patient:
-    image: ydiouy/medilabo-patient:1.0.0
+    image: ydiouy/medilabo-patient:latest
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     depends_on:
@@ -26,7 +26,7 @@ services:
       - medilabo-network
 
   assessment:
-    image: ydiouy/medilabo-assessment:1.0.0
+    image: ydiouy/medilabo-assessment:latest
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     depends_on:
@@ -35,7 +35,7 @@ services:
       - medilabo-network
 
   note:
-    image: ydiouy/medilabo-note:1.0.1
+    image: ydiouy/medilabo-note:latest
     depends_on:
       - note-mongo
       - gateway
@@ -49,17 +49,14 @@ services:
       - medilabo-network
 
   note-mongo:
-    image: mongo
+    image: ydiouy/medilabo-note-mongo:latest
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
-    ports:
-        - "27017:27017"
     volumes:
       - note_mongo_data:/data/db
-      - ./init:/docker-entrypoint-initdb.d/
     networks:
       - medilabo-network
 
