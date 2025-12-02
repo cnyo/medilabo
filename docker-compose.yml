@@ -8,6 +8,8 @@ services:
 
   front:
     image: ydiouy/medilabo-front:latest
+    ports:
+      - "9003:9003"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
 #      - SERVER_ADDRESS=0.0.0.0
