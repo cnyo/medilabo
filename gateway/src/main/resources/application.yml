@@ -1,0 +1,39 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+          routes:
+            - id: api-note
+              uri: http://note:9005
+              predicates:
+                - Path=/api/notes/**, /api/patients/*/notes/**
+              filters:
+                - StripPrefix=1
+            - id: api-patient
+              uri: http://patient:9002
+              predicates:
+                - Path=/api/patients/**
+              filters:
+                - StripPrefix=1
+            - id: api-assessment
+              uri: http://assessment:9006
+              predicates:
+                - Path=/api/assessment/**
+              filters:
+                - StripPrefix=1
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

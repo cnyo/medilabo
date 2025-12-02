@@ -1,0 +1,92 @@
+services:
+  gateway:
+    image: ydiouy/medilabo-gateway:1.0.0
+    ports:
+      - "9001:9001"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    networks:
+      - medilabo-network
+
+  front:
+    image: ydiouy/medilabo-front:1.0.0
+    ports:
+      - "9003:9003"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+#      - SERVER_ADDRESS=0.0.0.0
+    depends_on:
+      - gateway
+    networks:
+      - medilabo-network
+
+  patient:
+    image: ydiouy/medilabo-patient:1.0.0
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    ports:
+      - "9002:9002"
+    depends_on:
+      - gateway
+    networks:
+      - medilabo-network
+
+  assessment:
+    image: ydiouy/medilabo-assessment:1.0.0
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    depends_on:
+      - gateway
+    networks:
+      - medilabo-network
+
+  note:
+    image: ydiouy/medilabo-note:1.0.1
+    depends_on:
+      - note-mongo
+      - gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_SERVER: note-mongo
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    networks:
+      - medilabo-network
+
+  note-mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+        - "27017:27017"
+    volumes:
+      - note_mongo_data:/data/db
+      - ./init:/docker-entrypoint-initdb.d/
+    networks:
+      - medilabo-network
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/admin
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+    depends_on:
+      - note-mongo
+    networks:
+      - medilabo-network
+
+volumes:
+  note_mongo_data:
+
+networks:
+  medilabo-network:
+    driver: bridge

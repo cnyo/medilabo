@@ -1,0 +1,16 @@
+<header th:fragment="site-header" class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center gap-4">
+                <a href="#" th:href="@{/patients}" class="text-2xl font-semibold text-emerald-600">MediLabo</a>
+                <nav class="hidden md:flex gap-3">
+                    <a class="py-2 px-3 rounded hover:bg-slate-100" th:href="@{/patients}">Patients</a>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a class="btn btn-ghost" th:href="@{/logout}">Se déconnecter</a>
+            </div>
+        </div>
+    </div>
+</header>

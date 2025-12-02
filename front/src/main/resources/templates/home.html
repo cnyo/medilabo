@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>MediLabo</title>
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-b from-pink-50 via-white to-indigo-50 min-h-screen flex flex-col font-sans text-gray-800">
+
+    <div th:replace="fragments/header :: site-header"></div>
+
+    <!-- Main -->
+    <main class="flex-grow flex flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="max-w-2xl">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-indigo-800 mb-4">Bienvenue sur MediLabo</h2>
+            <p class="text-lg text-gray-600 mb-10 leading-relaxed">
+                Accédez à vos outils d’évaluation médicale et de suivi des patients.<br>
+                Sélectionnez une action depuis le menu pour commencer.
+            </p>
+            <a href="#"
+               class="inline-flex items-center justify-center bg-gradient-to-r from-indigo-600 to-pink-500 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-pink-600 transition-all duration-300 ease-out">
+                Accéder à l'application
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: site-footer"></div>
+</body>
+</html>

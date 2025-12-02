@@ -1,0 +1,7 @@
+FROM openjdk:17-slim-bullseye as development
+WORKDIR /app
+
+COPY target/*.jar /app/medilabo.app
+
+ENTRYPOINT ['java', '-jar', 'app/medilabo.jar']
+68p@SHPu0j#R6H&5oCedPScG+mojBj

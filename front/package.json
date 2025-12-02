@@ -1,0 +1,23 @@
+{
+  "name": "front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
+    "autoprefixer": "^10.4.21",
+    "daisyui": "^5.4.7",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.17"
+  },
+  "scripts": {
+    "build": "postcss src/css/tailwind.css -o src/main/resources/static/css/styles.css",
+    "watch": "postcss src/css/tailwind.css -o src/main/resources/static/css/styles.css --watch",
+    "test": "npx @tailwindcss/cli -i ./src/css/tailwind.css -o ./src/main/resources/static/css/styles.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
