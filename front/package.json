@@ -12,7 +12,7 @@
     "tailwindcss": "^4.1.17"
   },
   "scripts": {
-    "build": "postcss src/css/tailwind.css -o src/main/resources/static/css/styles.css",
+    "build": "postcss src/css/tailwind.css -o src/main/resources/static/css/styles.css --minify",
     "watch": "postcss src/css/tailwind.css -o src/main/resources/static/css/styles.css --watch",
     "test": "npx @tailwindcss/cli -i ./src/css/tailwind.css -o ./src/main/resources/static/css/styles.css --watch"
   },

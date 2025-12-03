@@ -1,0 +1,11 @@
+.git
+.gitignore
+.DS_Store
+node_modules
+target
+*.log
+.idea
+.mvn
+*.jar.original
+.env.local
+npm-debug.log

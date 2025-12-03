@@ -1,56 +1,85 @@
+version: '3.9'
+
 services:
+  # ================================
+  # API Gateway
+  # ================================
   gateway:
     image: ydiouy/medilabo-gateway:latest
+    container_name: medilabo-gateway
+    restart: always
     ports:
       - "9001:9001"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=prod
     networks:
       - medilabo-network
 
+  # ================================
+  # Front Service
+  # ================================
   front:
     image: ydiouy/medilabo-front:latest
+    container_name: medilabo-front
+    restart: always
     ports:
       - "9003:9003"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=prod
+#      - GATEWAY_URL=http://gateway:9001
 #      - SERVER_ADDRESS=0.0.0.0
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
+  # ================================
+  # Patient Service
+  # ================================
   patient:
     image: ydiouy/medilabo-patient:latest
+    container_name: medilabo-patient
+    restart: always
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
+  # ================================
+  # Assessment Service
+  # ================================
   assessment:
     image: ydiouy/medilabo-assessment:latest
+    container_name: medilabo-assessment
+    restart: always
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
+  # ================================
+  # Note Service
+  # ================================
   note:
     image: ydiouy/medilabo-note:latest
+    container_name: medilabo-note
+    restart: always
     depends_on:
-      note-mongo:
-        condition: service_healthy
-      gateway:
-        condition: service_started
+      - gateway
+      - note-mongo
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_PROFILES_ACTIVE: prod
       MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/${MONGO_DATABASE_NAME}?authSource=admin
     networks:
       - medilabo-network
 
+  # ================================
+  # MongoDB
+  # ================================
   note-mongo:
     image: ydiouy/medilabo-note-mongo:latest
     restart: always
@@ -58,13 +87,9 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE_NAME}
-    healthcheck:
-      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     volumes:
       - note_mongo_data:/data/db
+#      - mongo-config:/data/configdb
     networks:
       - medilabo-network
 

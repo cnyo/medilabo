@@ -1,70 +1,101 @@
+version: '3.9'
+
 services:
+  # ================================
+  # API Gateway
+  # ================================
   gateway:
     build: ./gateway
     ports:
       - "9001:9001"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-#    volumes:
-#      - ./gateway:/app
+      - SPRING_PROFILES_ACTIVE=dev
+    volumes:
+      - ./gateway/src:/app/src
+      - ./gateway/pom.xml:/app/pom.xml
     networks:
       - medilabo-network
 
+  # ================================
+  # Front Service
+  # ================================
   front:
-    build: ./front
+    build:
+      context: ./front
+      args:
+        BUILD_STAGE: "dev"
     ports:
       - "9003:9003"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=dev
     #      - SERVER_ADDRESS=0.0.0.0
-#    volumes:
-#      - ./front:/app
+    volumes:
+      - ./front/src:/app/src
+      - ./front/pom.xml:/app/pom.xml
+      - ./front/src/css:/app/src/css
+      - ./front/package.json:/app/package.json
+      - ./front/postcss.config.mjs:/app/postcss.config.mjs
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
+  # ================================
+  # Patient Service
+  # ================================
   patient:
     build: ./patient
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=dev
     ports:
       - "9002:9002"
-#    volumes:
-#      - ./patient:/app
+    volumes:
+      - ./patient/src:/app/src
+      - ./patient/pom.xml:/app/pom.xml
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
+  # ================================
+  # Assessment Service
+  # ================================
   assessment:
     build: ./assessment
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=dev
     ports:
       - "9006:9006"
-#    volumes:
-#      - ./assessment:/app
+    volumes:
+      - ./assessment/src:/app/src
+      - ./assessment/pom.xml:/app/pom.xml
     depends_on:
       - gateway
     networks:
       - medilabo-network
 
+  # ================================
+  # Note Service
+  # ================================
   note:
     build: ./note
     depends_on:
       - note-mongo
       - gateway
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/${MONGO_INITDB_DATABASE}?authSource=admin
+      SPRING_PROFILES_ACTIVE: dev
+      MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/${MONGO_DATABASE_NAME}?authSource=admin
     ports:
       - "9005:9005"
-#    volumes:
-#      - ./note:/app
+    volumes:
+      - ./note/src:/app/src
+      - ./note/pom.xml:/app/pom.xml
     networks:
       - medilabo-network
 
+  # ================================
+  # MongoDB
+  # ================================
   note-mongo:
     build: ./note_mongo
     restart: always
@@ -73,18 +104,22 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE_NAME}
     volumes:
       - note_mongo_data:/data/db
     networks:
       - medilabo-network
 
+  # ================================
+  # Mongo Express pour l'administration en dev
+  # ================================
   mongo-express:
     image: mongo-express
-    restart: always
     ports:
       - "8081:8081"
     environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       ME_CONFIG_MONGODB_URL: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@note-mongo:27017/admin
       ME_CONFIG_BASICAUTH_ENABLED: true
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}

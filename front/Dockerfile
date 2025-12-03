@@ -1,98 +1,78 @@
+ARG BUILD_STAGE=prod
+
 # -------------------------
-# 1. Stage Node
+# Stage 1: BUILD CSS
 # -------------------------
-FROM node:25-alpine3.21 AS frontend-builder
-WORKDIR /app
+FROM node:25-alpine3.21 AS frontend-base
+WORKDIR /build
 
-# Copier uniquement les fichiers du frontend
-COPY package.json .
-RUN npm install
+# Copier fichiers de configuration
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# A revoir
-COPY src/css/tailwind.css ./src/css/tailwind.css
+# Copier configuration PostCSS
+COPY postcss.config.mjs ./
+COPY src/css ./src/css
+COPY src/main/resources/templates ./src/main/resources/templates
 
-# Générer les assets Tailwind pour la production
+# Générer les CSS optimisés
+# RUN npm run build
+
+# -------------------------
+# Stage PROD
+# -------------------------
+FROM frontend-base AS frontend-prod
 RUN npm run build
 
 # -------------------------
-# 2. Build maven
+# Stage DEV
 # -------------------------
-FROM maven:eclipse-temurin AS backend-builder
-WORKDIR /app
+FROM frontend-base AS frontend-dev
+RUN npm run watch
 
-# Copier le pom.xml puis télécharger les dépendances
+# -------------------------
+# Stage FRONT
+# -------------------------
+ARG BUILD_STAGE=prod
+FROM frontend-${BUILD_STAGE} AS frontend
+
+# -------------------------
+# Stage 2: BUILD JAVA
+# -------------------------
+FROM maven:eclipse-temurin AS java-builder
+WORKDIR /build
+
+# Copier uniquement les fichiers du frontend
 COPY pom.xml .
 RUN mvn -B dependency:go-offline
 
+# Copier le code source
 COPY src ./src
 
-# Copier les assets générés par le frontend
-COPY --from=frontend-builder /app/src/main/resources/static/css/styles.css ./src/main/resources/static/css/styles.css
+# Copier les CSS générés du stage précédent
+COPY --from=frontend /build/src/main/resources/static/css /build/src/main/resources/static/css
 
-
-# Build du jar Spring Boot
+# Build Maven
 RUN mvn -B clean package -DskipTests
 
 # -------------------------
-# 2. Stage final
+#  Stage 3: RUNTIME
 # -------------------------
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copier uniquement le JAR (sans sources, sans dépendances inutiles)
-COPY --from=backend-builder /app/target/*.jar app.jar
+# Copier uniquement le JAR du stage de build
+ARG JAR_FILE=/build/target/*.jar
+COPY --from=java-builder ${JAR_FILE} /app/app.jar
 
-ENTRYPOINT ["java","-jar","app.jar"]
+RUN addgroup --system appgroup && \
+    adduser --system --ingroup appgroup appuser
 
+USER appuser
 
-## Use --no-install-recommends to reduce image size
-#RUN apt-get update && apt-get install -y --no-install-recommends dumb-init \
-#    # Clean up apt cache to reduce image size
-#    && rm -rf /var/lib/apt/lists/*
-#
-## Copy the built jar from the build stage
-#COPY --from=build /app/target/*.jar app.jar
-#
-## Use dumb-init to handle PID 1 issues
-#ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-#CMD ["java", "-jar", "app.jar"]
-#
-## -------------------------
-## 2. Build Stage
-## -------------------------
-#FROM eclipse-temurin:17-jdk AS build
-#WORKDIR /app
-#
-## Pre-download dependencies
-#COPY pom.xml mvnw ./
-#COPY .mvn .mvn
-#COPY mvnw ./
-#RUN ./mvnw dependency:go-offline -B
-#
-## Copy source code and build the application
-#COPY src ./src
-#RUN ./mvnw package -DskipTests
-#
-#
-## -------------------------
-## 2. Run Stage
-## -------------------------
-#FROM eclipse-temurin:17-jre-alpine
-#WORKDIR /app
-#
-## Copier uniquement le JAR (sans sources, sans dépendances inutiles)
-#COPY --from=build /app/target/*.jar app.jar
-#
-#ENTRYPOINT ["java", "-jar","app.jar"]
+EXPOSE 9003
 
-# Use --no-install-recommends to reduce image size
-#RUN apt-get update && apt-get install -y --no-install-recommends dumb-init \
-#    # Clean up apt cache to reduce image size
-#    && rm -rf /var/lib/apt/lists/*
+#HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+#  CMD curl -f http://localhost:9003/actuator/health || exit 1
 
-# Copy the built jar from the build stage
-#COPY --from=build /app/target/*.jar app.jar
-
-# Use dumb-init to handle PID 1 issues
-#ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-#CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
