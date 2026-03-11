@@ -19,7 +19,7 @@ services:
   # Front Service
   # ================================
   front:
-    image: ydiouy/medilabo-front:latest
+    image: ydiouy/medilabo-front:1.0.1
     container_name: medilabo-front
     restart: always
     ports:
