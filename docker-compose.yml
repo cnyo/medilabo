@@ -5,7 +5,10 @@ services:
   # API Gateway
   # ================================
   gateway:
-    image: ydiouy/medilabo-gateway:latest
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+#    image: ydiouy/medilabo-gateway:latest
     container_name: medilabo-gateway
     restart: always
     ports:
@@ -19,7 +22,10 @@ services:
   # Front Service
   # ================================
   front:
-    image: ydiouy/medilabo-front:1.0.1
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+#    image: ydiouy/medilabo-front:1.0.1
     container_name: medilabo-front
     restart: always
     ports:
@@ -37,7 +43,10 @@ services:
   # Patient Service
   # ================================
   patient:
-    image: ydiouy/medilabo-patient:latest
+    build:
+      context: ./patient
+      dockerfile: Dockerfile
+#    image: ydiouy/medilabo-patient:latest
     container_name: medilabo-patient
     restart: always
     environment:
@@ -51,7 +60,10 @@ services:
   # Assessment Service
   # ================================
   assessment:
-    image: ydiouy/medilabo-assessment:latest
+    build:
+      context: ./assessment
+      dockerfile: Dockerfile
+#    image: ydiouy/medilabo-assessment:latest
     container_name: medilabo-assessment
     restart: always
     environment:
@@ -65,7 +77,10 @@ services:
   # Note Service
   # ================================
   note:
-    image: ydiouy/medilabo-note:latest
+    build:
+      context: ./note
+      dockerfile: Dockerfile
+#    image: ydiouy/medilabo-note:latest
     container_name: medilabo-note
     restart: always
     depends_on:

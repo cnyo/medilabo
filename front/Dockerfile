@@ -15,8 +15,8 @@ COPY postcss.config.mjs ./
 COPY src/css ./src/css
 COPY src/main/resources/templates ./src/main/resources/templates
 
-# Générer les CSS optimisés
-# RUN npm run build
+# Créer le dossier de destination pour le CSS
+RUN mkdir -p src/main/resources/static/css
 
 # -------------------------
 # Stage PROD
@@ -49,8 +49,11 @@ RUN mvn -B dependency:go-offline
 # Copier le code source
 COPY src ./src
 
+# Créer le dossier pour les CSS s'il n'existe pas
+RUN mkdir -p /build/src/main/resources/static/css
+
 # Copier les CSS générés du stage précédent
-COPY --from=frontend /build/src/main/resources/static/css /build/src/main/resources/static/css
+COPY --from=frontend /build/src/main/resources/static/css/styles.css /build/src/main/resources/static/css/styles.css
 
 # Build Maven
 RUN mvn -B clean package -DskipTests
